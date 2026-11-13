@@ -50,6 +50,10 @@ button.sec{background:#e8eef6;color:#0b5cad}
 <div><label>Coupons</label><input type="number" step="0.01" min="0" id="coup"><div class="err"></div></div>
 <div><label>Cash Purchases</label><input type="number" step="0.01" min="0" id="cpur"><div class="err"></div></div>
 <div><label>Cash Expenses</label><input type="number" step="0.01" min="0" id="cexp"><div class="err"></div></div></div>
+<div id="so" style="margin-top:18px;padding:10px 12px;border:1px solid #f1b0a8;background:#fdecea;border-radius:8px;color:#b03a2e;font-size:.9rem">
+<div style="font-weight:700">Short/Over (live preview, not submitted)</div>
+<div id="soAmt" style="font-size:1.15rem;font-weight:800;margin:2px 0">$0.00</div>
+<div id="soDet" style="color:#8a3a30"></div></div>
 <button type="submit">Submit</button></form>
 <div id="done"></div><p class="sub" id="cnt"></p></div>
 <script>
@@ -73,17 +77,22 @@ const WEBAPP_URL='https://script.google.com/macros/s/AKfycbx5ZSpU9HmyvhfSYle0_Kz
 const log=()=>JSON.parse(localStorage.getItem('closeLog')||'[]');
 function count(){$('cnt').textContent=log().length+' submission(s) sent from this device.'}count();
 document.querySelectorAll('input,select').forEach(i=>i.addEventListener('input',()=>{const e=i.nextElementSibling;if(e&&e.classList.contains('err'))e.textContent=''}));
+function so(){const store=[...OWN,...GROC].reduce((a,n)=>a+v(key(n)),0),gas=v('fuel')-v('disc');
+ const inc=gas+v('tax')+store,out=v('card')+v('dep')+v('fd130')+v('coup')+v('cpur')+v('cexp'),d=Math.round((out-inc)*100)/100;
+ $('soAmt').textContent=(d<0?'Short ':d>0?'Over ':'')+'$'+Math.abs(d).toFixed(2);
+ $('soDet').textContent='Outgoing $'+m(out)+' minus Incoming $'+m(inc)+' (gas $'+m(gas)+' + tax $'+m(v('tax'))+' + store items $'+m(store)+')';}
+document.querySelectorAll('input').forEach(i=>i.addEventListener('input',so));so();
 $('f').addEventListener('submit',e=>{e.preventDefault();let ok=true;
  document.querySelectorAll('[required]').forEach(i=>{const er=i.nextElementSibling;if(!i.value.trim()){er.textContent='Required';ok=false}else if(i.type=='number'&&v(i.id)<0){er.textContent='Must be 0 or more';ok=false}});
  if(v('disc')>v('fuel')){$('disc').nextElementSibling.textContent='Discount cannot exceed fuel sales';ok=false}
  if(!ok){window.scrollTo(0,0);return}
-const r={date:$('date').value,store_name:$('store').value,fuel_sales:m(v('fuel')),fuel_discounts:m(v('disc')),sales_tax:m(v('tax')),total_sales:m(v('total')),card_sales:m(v('card')),bank_deposit:m(v('dep')),fd130:m(v('fd130')),coupons:m(v('coup')),cash_purchases:m(v('cpur')),cash_expenses:m(v('cexp')),cashier:$('cashier').value,grocery_total:$('grocTot').value};
+const r={date:$('date').value,store_name:$('store').value,fuel_sales:m(v('fuel')),fuel_discounts:m(v('disc')),sales_tax:m(v('tax')),total_sales:m(v('total')),card_sales:m(v('card')),bank_deposit:m(v('dep')),fd130:m(v('fd130')),coupons:m(v('coup')),cash_purchases:m(v('cpur')),cash_expenses:m(v('cexp')),cashier:$('cashier').value,grocery_total:m(GROC.reduce((a,n)=>a+v(key(n)),0))};
  [...OWN,...GROC].forEach(n=>r[n.toLowerCase().replace(/\W+/g,'_')]=m(v(key(n))));
  const btn=document.querySelector('button[type=submit]');btn.disabled=true;btn.textContent='Sending...';
  fetch(WEBAPP_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify(r)})
  .then(()=>{$('done').style.display='block';$('done').style.background='#e6f6ec';$('done').textContent='Submitted to the Store Close Log sheet. Thank you!';
   const all=log();all.push(r);localStorage.setItem('closeLog',JSON.stringify(all));count();
-  document.querySelectorAll('.dep,#fuel,#disc,#tax,#total,#card,#dep,#fd130,#coup,#cpur,#cexp,#gAdd').forEach(i=>i.value='');document.getElementById('gRes').textContent='';})
+  document.querySelectorAll('.dep,#fuel,#disc,#tax,#total,#card,#dep,#fd130,#coup,#cpur,#cexp,#gAdd').forEach(i=>i.value='');document.getElementById('gRes').textContent='';so();})
  .catch(()=>{$('done').style.display='block';$('done').style.background='#fdecea';$('done').textContent='Could not send - check internet and submit again.';})
  .finally(()=>{btn.disabled=false;btn.textContent='Submit';});});
 </script></body></html>
