@@ -40,19 +40,19 @@ button.sec{background:#e8eef6;color:#0b5cad}
 <button type="submit">Submit</button></form>
 <div id="done"></div><p class="sub" id="cnt"></p></div>
 <script>
-const OWN=['Beer','Cigarettes','Novelty','Oil','Tobacco','Vape'],GROC=['Candy','Chips','Deli','Dept 1','Drinks','Grocery','Ice','TBA'];
+const OWN=['Beer','Cigarettes','Novelty','Oil','Tobacco','Vape'],GROC=['Ice','TBA','Candy','Chips','Deli','Dept 1','Drinks','Grocery'];
 const key=n=>'d_'+n.replace(/\W/g,'');
 function mk(list,box){list.forEach(n=>{box.insertAdjacentHTML('beforeend',`<div><label>${n}</label><input type="number" step="0.01" id="${key(n)}" class="dep"><div class="err"></div></div>`)})}
 mk(OWN,document.getElementById('own'));mk(GROC,document.getElementById('groc'));
 (function(){const gi=document.getElementById(key('Grocery')),cell=gi.parentElement;
  cell.querySelector('label').innerHTML='Grocery <small>(anything not in any other category goes here)</small>';
  cell.style.gridColumn='1 / -1';
- cell.insertAdjacentHTML('beforeend','<p class="sub" style="margin:6px 0 4px">Enter the amounts with plus signs between them (e.g. 2.50+3.99+1.25), then click Calculate.</p><div style="display:flex;gap:8px"><input id="gAdd" placeholder="2.50+3.99+1.25" inputmode="decimal" style="flex:1"><button type="button" id="gCalc" style="width:auto;margin:0;padding:0 18px">Calculate</button></div><div id="gRes" style="margin-top:6px;font-weight:700"></div>');
+ cell.insertAdjacentHTML('beforeend','<p class="sub" style="margin:6px 0 4px">Use the below calculator to calculate groceries. Just put in amounts like 2.50+3.99.</p><div style="display:flex;gap:8px"><input id="gAdd" placeholder="2.50+3.99+1.25" inputmode="decimal" style="flex:1"><button type="button" id="gCalc" style="width:auto;margin:0;padding:0 18px">Calculate</button></div><div id="gRes" style="margin-top:6px;font-weight:700"></div>');
  document.getElementById('gCalc').addEventListener('click',()=>{const parts=document.getElementById('gAdd').value.split('+').map(x=>x.trim()).filter(x=>x!=='');
   const bad=parts.filter(x=>isNaN(parseFloat(x))||!/^-?\$?\d*\.?\d+$/.test(x));const out=document.getElementById('gRes');
   if(!parts.length){out.style.color='#b03a2e';out.textContent='Enter amounts first.';return}
   if(bad.length){out.style.color='#b03a2e';out.textContent='Check these entries: '+bad.join(', ');return}
-  const t=parts.reduce((s,x)=>s+parseFloat(x.replace('$','')),0);out.style.color='#1e7b3c';out.textContent='Total: $'+(Math.round(t*100)/100).toFixed(2);});
+  const t=parts.reduce((s,x)=>s+parseFloat(x.replace('$','')),0);gi.value=(Math.round(t*100)/100).toFixed(2);gi.dispatchEvent(new Event('input',{bubbles:true}));out.textContent='';});
 })();
 const $=id=>document.getElementById(id),v=id=>parseFloat($(id).value)||0,m=n=>(Math.round(n*100)/100).toFixed(2);
 $('date').valueAsDate=new Date();
