@@ -13,6 +13,19 @@ button.sec{background:#e8eef6;color:#0b5cad}
 #done{display:none;margin-top:14px;padding:10px;background:#e6f6ec;border-radius:8px}
 </style></head><body><div class="card">
 <h1>Nightly Store Close</h1><p class="sub">Varsa GROUP LLC – fill from the Ruby2 Store Close report</p>
+<details open style="background:#f5f8fc;border:1px solid #dde;border-radius:8px;padding:10px 12px;margin:0 0 12px;font-size:.92rem;line-height:1.4">
+<summary style="font-weight:700;color:#0b5cad;cursor:pointer">How to read the report (Store #299 Chevron)</summary>
+<ol style="margin:8px 0 0;padding-left:18px">
+<li><b>Fuel:</b> copy <b>Total Fuel Sales</b> and <b>Fuel Discounts</b> from the fuel section. Enter the discount as a positive number.</li>
+<li><b>Departments</b> (Beer, Cigarettes, Novelty, Oil, Tobacco, Vape): in the department sales section, find each name and copy its <b>Net Sales</b> number.</li>
+<li><b>Grocery group</b> (Ice, TBA, Candy, Chips, Deli, Dept 1, Drinks, Grocery): same section, same <b>Net Sales</b> column. Any department not listed on this form goes in <b>Grocery</b>. Use the calculator to add them.</li>
+<li><b>Sales Tax:</b> copy <b>Total Taxes Collected</b>.</li>
+<li><b>Total Sales:</b> copy the total sales figure printed on the report.</li>
+<li><b>Credit/Debit:</b> copy <b>Network Revenue</b>, which is the Ruby C/C total.</li>
+<li><b>Outgoing:</b> these aren't on the report. Enter the bank deposit (cash minus the $300 drawer float), plus any FD130, coupons, cash purchases, and cash expenses.</li>
+</ol>
+<p style="margin:6px 0 0;color:#667">Leave a field at 0 or blank if it isn't on the report.</p>
+</details>
 <form id="f" novalidate>
 <label>Store name</label><select id="store" required><option value="">Select store</option><option>Thomasville Chevron</option><option>Thomasville Outrun</option></select><div class="err"></div>
 <div class="grid"><div><label>Date</label><input type="date" id="date" required><div class="err"></div></div>
