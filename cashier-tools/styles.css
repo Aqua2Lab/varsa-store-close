@@ -55,3 +55,9 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--a1);back
 .toast.show{transform:translateX(-50%) translateY(0)}.toast.fail{background:#e11d48}
 .foot{text-align:center;color:var(--muted);font-size:.82rem;margin-top:18px}
 .big{font-size:1.5rem;font-weight:800}
+
+.recent{margin-top:16px}.recent-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.mini{border:1px solid #ccc;background:#fff;border-radius:8px;padding:4px 10px;font-size:13px}
+.muted{color:#777;font-size:14px}.tblwrap{overflow:auto;max-height:340px}.recent th{position:sticky;top:0}
+.recent table{border-collapse:collapse;width:100%;font-size:13px}.recent th,.recent td{border-bottom:1px solid #eee;padding:6px 5px;text-align:left;white-space:nowrap}
+.recent th{background:#f6f6f6}

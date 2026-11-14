@@ -78,6 +78,45 @@
     return ok;
   }
 
+
+  // ===== Recent entries table (same page) =====
+  const COLS = {
+    product_issue: [['issue_type','Issue'],['item_name','Item'],['upc','UPC'],['_status','Status']],
+    supply_request: [['item','Item'],['stock_level','Stock'],['urgency','Urgency'],['_status','Status']],
+    low_stock: [['product_name','Product'],['stock_level','Stock'],['qty_on_hand','Qty'],['urgency','Urgency']],
+    shift_checklist: [['shift','Shift'],['started_300','$300'],['washroom_cleaned','Washroom'],['tasks_posted','Tasks']],
+    till_close: [['shift','Shift'],['cash_counted','Counted'],['expected_cash','Expected'],['difference','Diff']],
+    fuel_price: [['regular','Reg'],['mid','Mid'],['premium','Prem'],['diesel','Diesel']]
+  }[FORM_KEY] || [];
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const wrap = document.createElement('div'); wrap.className = 'card recent';
+  wrap.innerHTML = '<div class="recent-head"><b>Recent entries</b><button type="button" class="mini">↻ Refresh</button></div><div class="recent-body muted">Loading…</div>';
+  form.insertAdjacentElement('afterend', wrap);
+  const body = $('.recent-body', wrap);
+  function loadRecent() {
+    if (!/^https:\/\/script\.google\.com\//.test(WEB_APP_URL)) { body.textContent = 'Not set up yet.'; return; }
+    const store = val('store'), cb = 'vcRecent' + Date.now();
+    body.textContent = 'Loading…';
+    const sc = document.createElement('script');
+    const done = () => { delete window[cb]; sc.remove(); };
+    window[cb] = res => {
+      done();
+      const rows = (res && res.rows) || [];
+      if (!rows.length) { body.innerHTML = '<span class="muted">No entries yet' + (store ? ' for ' + esc(store) : '') + '.</span>'; return; }
+      const head = ['When', 'Store', 'By'].concat(COLS.map(c => c[1]));
+      body.innerHTML = '<div class="tblwrap"><table><thead><tr>' + head.map(h => '<th>' + esc(h) + '</th>').join('') + '</tr></thead><tbody>' +
+        rows.map(r => '<tr><td>' + esc(String(r._ts).replace(/:\d\d$/, '')) + '</td><td>' + esc(String(r.store).replace('Thomasville ', '')) + '</td><td>' + esc(r.cashier) + '</td>' +
+          COLS.map(c => '<td>' + esc(r[c[0]]) + '</td>').join('') + '</tr>').join('') + '</tbody></table></div>';
+    };
+    sc.onerror = () => { done(); body.innerHTML = '<span class="muted">Could not load recent entries.</span>'; };
+    sc.src = WEB_APP_URL + '?form=' + encodeURIComponent(FORM_KEY) + '&limit=200' + (store ? '&store=' + encodeURIComponent(store) : '') + '&callback=' + cb;
+    document.body.appendChild(sc);
+  }
+  window.loadRecent = loadRecent;
+  $('.mini', wrap).addEventListener('click', loadRecent);
+  $$('[name=store]').forEach(r => r.addEventListener('change', loadRecent));
+  loadRecent();
+
   const toast = $('#toast') || document.body.appendChild(Object.assign(document.createElement('div'), { id: 'toast', className: 'toast' }));
   function say(msg, fail) { toast.textContent = msg; toast.classList.toggle('fail', !!fail); toast.classList.add('show'); clearTimeout(say.t); say.t = setTimeout(() => toast.classList.remove('show'), 3800); }
 
@@ -100,7 +139,7 @@
         if (nameI) nameI.value = keepName;
         $$('[data-default]').forEach(i => i.value = i.dataset.default);
         $$('.err').forEach(e => e.textContent = ''); $$('.invalid').forEach(e => e.classList.remove('invalid'));
-        refresh(); window.scrollTo({ top: 0, behavior: 'smooth' });
+        refresh(); setTimeout(loadRecent, 2500); setTimeout(loadRecent, 7000);
       })
       .catch(() => say('❌ Could not send. Check internet and try again.', true))
       .finally(() => { btn.disabled = false; btn.textContent = label; });
