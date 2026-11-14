@@ -365,10 +365,10 @@ function readRows_(spec, store, n) {
 // Store Close Log > Entries (A..AF). Short/Over = Total Outgoing - Total Incoming, same as the form
 // and the Daily Summary tab. Never writes to that sheet.
 function storeClose_(p) {
-  const sh = SpreadsheetApp.openById(STORE_CLOSE_ID).getSheetByName('Entries');
+  const ssc = SpreadsheetApp.openById(STORE_CLOSE_ID), sh = ssc.getSheetByName('Entries');
   const last = sh ? sh.getLastRow() : 0;
   if (last < 2) return [];
-  const tz = Session.getScriptTimeZone();
+  const tz = ssc.getSpreadsheetTimeZone() || 'America/Chicago';
   const num = function (x) { if (typeof x === 'number') return x; const v = parseFloat(String(x).replace(/[$,\s]/g, '')); return isNaN(v) ? 0 : v; };
   const r2 = function (x) { return Math.round(x * 100) / 100; };
   let rows = sh.getRange(2, 1, last - 1, 32).getValues().filter(function (r) { return r[0] !== '' && r[1] !== ''; }).map(function (r) {
