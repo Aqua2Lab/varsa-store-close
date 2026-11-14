@@ -1,0 +1,61 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Product Issue · Varsa Cashier Tools</title><link rel="stylesheet" href="styles.css">
+<style>:root{--a1:#f97316;--a2:#facc15}</style></head><body><div class="wrap">
+<header class="hero"><div class="top"><a class="back" href="index.html">← Home</a><span class="brand">Sunshine Food Mart</span></div>
+<h1><span class="emo">🏷️</span>Product Issue</h1><p>Item won't scan, deal missing, wrong price, or no tag. Do a price check on the register first.</p></header>
+<form data-form="product_issue" novalidate autocomplete="off">
+<section class="card"><h2><span class="dot"></span>Who &amp; where</h2>
+<div class="q">Store</div><div class="chips" id="storeBox" data-name="store" data-req></div>
+<label>Cashier name</label><input type="text" name="cashier" required placeholder="Your name">
+</section>
+
+<section class="card"><h2><span class="dot"></span>What's wrong?</h2>
+<div class="chips" data-name="issue_type" data-req data-options="Item Not Scannable|Deal Missing / Not Showing|Incorrect Price|No Price Tag|Other"></div>
+</section>
+<section class="card"><h2><span class="dot"></span>The item</h2>
+<label>Item name</label><input type="text" name="item_name" required placeholder="e.g. Doritos Nacho Cheese">
+<div class="grid"><div><label>UPC <small>(numbers under barcode, or NA)</small></label><input type="text" name="upc" required inputmode="numeric" placeholder="012345678905 or NA"></div>
+<div><label>Brand / size</label><input type="text" name="brand_size" placeholder="e.g. Frito-Lay 9.25 oz"></div></div>
+<div class="grid"><div><label>Where in the store?</label><select name="location" required><option value="">Choose…</option><option>Front counter</option><option>Behind counter</option><option>Drinks cooler</option><option>Beer cooler</option><option>Chips aisle</option><option>Candy aisle</option><option>Grocery aisle</option><option>Ice cream freezer</option><option>Coffee station</option><option>Endcap / display</option><option>Other</option></select></div>
+<div><label>Qty on shelf</label><input type="number" name="qty_on_shelf" min="0" inputmode="numeric" placeholder="0"></div></div>
+</section>
+
+<section class="card" data-if="issue_type=*&issue_type!=Item Not Scannable"><h2><span class="dot"></span>Price check</h2>
+<div class="q">Did you do a price check on the register?</div><div class="chips" data-name="price_check" data-req data-options="Yes|No"></div>
+<div class="follow" data-if="price_check=Yes"><label>Register price shown</label><input type="number" name="register_price" step="0.01" min="0" inputmode="decimal" required placeholder="0.00"></div>
+<div class="note bad" data-if="price_check=No" data-block>⚠️ Please do a <b>price check on the register first</b>, then come back and finish this report.</div>
+</section>
+
+<section class="card" data-if="issue_type=Item Not Scannable"><h2><span class="dot"></span>Not scannable</h2>
+<div class="q">What happens when you scan it?</div><div class="chips" data-name="scan_result" data-req data-options="Item not found|Scans as wrong item"></div>
+<label>Price you charged the customer <small>(0 if not sold)</small></label><input type="number" name="price_charged" step="0.01" min="0" inputmode="decimal" required placeholder="0.00">
+</section>
+
+<section class="card" data-if="issue_type=Deal Missing / Not Showing"><h2><span class="dot"></span>Deal details</h2>
+<label>Deal on the sign <small>(e.g. 2 for $5)</small></label><input type="text" name="deal_desc" required placeholder="2 for $5">
+<label>Deal price on the sign</label><input type="number" name="deal_sign_price" step="0.01" min="0" inputmode="decimal" required placeholder="5.00">
+<div class="q">Is a deal tag on the shelf?</div><div class="chips" data-name="deal_tag" data-req data-options="Yes|No"></div>
+</section>
+
+<section class="card" data-if="issue_type=Incorrect Price"><h2><span class="dot"></span>Price mismatch</h2>
+<label>Shelf tag price</label><input type="number" name="shelf_price" step="0.01" min="0" inputmode="decimal" required placeholder="0.00">
+<div class="q">Which price was the customer charged?</div><div class="chips" data-name="customer_charged" data-req data-options="Shelf tag price|Register price|Not sold yet"></div>
+<div class="note info hidden" id="diff"></div>
+</section>
+
+<section class="card" data-if="issue_type=No Price Tag"><h2><span class="dot"></span>No price tag</h2>
+<div class="q">Does the item scan?</div><div class="chips" data-name="item_scans" data-req data-options="Yes|No"></div>
+</section>
+
+<section class="card"><h2><span class="dot"></span>Anything else</h2>
+<label class="check"><input type="checkbox" name="photo_taken" value="Yes"> 📸 I took a photo of the item / shelf tag</label>
+<label>Details <small data-if="issue_type!=Other">(optional)</small></label><textarea name="details" placeholder="Anything the manager should know"></textarea>
+</section>
+<button class="btn" type="submit">Report Issue</button></form>
+<p class="foot">Varsa GROUP LLC · answers go to the Varsa Cashier Tracker sheet</p></div>
+<div class="toast" id="toast"></div>
+<script src="config.js"></script><script src="app.js"></script><script>
+window.onChange=()=>{const d=document.getElementById('diff'),s=parseFloat(val('shelf_price')),r=parseFloat(val('register_price'));
+ if(val('issue_type')==='Incorrect Price'&&!isNaN(s)&&!isNaN(r)){d.classList.remove('hidden');const x=(r-s);d.textContent=x===0?'Shelf and register match. Is this really an incorrect price?':'Register is $'+Math.abs(x).toFixed(2)+(x>0?' HIGHER':' LOWER')+' than the shelf tag.';}else d.classList.add('hidden');};
+window.beforeSubmit=d=>{if(d.issue_type==='Other'&&!d.details)return 'Please describe the issue in Details';d.photo_taken=d.photo_taken||'No';if(d.upc&&d.upc.toLowerCase()==='na')d.upc='NA';};
+</script></body></html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Low Stock · Varsa Cashier Tools</title><link rel="stylesheet" href="styles.css">
+<style>:root{--a1:#8b5cf6;--a2:#ec4899}</style></head><body><div class="wrap">
+<header class="hero"><div class="top"><a class="back" href="index.html">← Home</a><span class="brand">Sunshine Food Mart</span></div>
+<h1><span class="emo">📦</span>Low Stock</h1><p>A product on the shelf is running low or is out. Helps Varun &amp; Sanchari order.</p></header>
+<form data-form="low_stock" novalidate autocomplete="off">
+<section class="card"><h2><span class="dot"></span>Who &amp; where</h2>
+<div class="q">Store</div><div class="chips" id="storeBox" data-name="store" data-req></div>
+<label>Cashier name</label><input type="text" name="cashier" required placeholder="Your name">
+</section>
+
+<section class="card"><h2><span class="dot"></span>The product</h2>
+<label>Product name</label><input type="text" name="product_name" required placeholder="e.g. Red Bull 12 oz">
+<label>UPC <small>(numbers under barcode, or NA)</small></label><input type="text" name="upc" required inputmode="numeric" placeholder="012345678905 or NA">
+<div class="q">Category</div><div class="chips" data-name="category" data-req data-options="Drinks|Beer|Wine|Tobacco/Cigarettes|Vape/Novelty|Chips|Candy|Grocery|Ice Cream|Coffee|Other"></div>
+<div class="q">Stock level</div><div class="chips" data-name="stock_level" data-req data-options="Running Low|Out of Stock"></div>
+</section>
+<section class="card"><h2><span class="dot"></span>Ordering info</h2>
+<div class="grid"><div><label>Qty on hand right now</label><input type="number" name="qty_on_hand" min="0" inputmode="numeric" placeholder="0"></div>
+<div><label>How long can we last?</label><select name="days_last" required><option value="">Choose…</option><option>Already out</option><option>Less than 1 day</option><option>1–2 days</option><option>3–5 days</option><option>A week or more</option></select></div></div>
+<div class="q">Usual vendor <small>(if you know)</small></div><div class="chips vendors" data-name="vendor"></div>
+<label>Suggested order quantity</label><input type="text" name="order_qty" placeholder="e.g. 2 cases, 5 packs">
+<div class="q">How urgent?</div><div class="chips" data-name="urgency" data-req data-options="Today|This week|Next order"></div>
+<div class="note warn hidden" id="urgeNote">⏰ It's out or will run out within a day — consider picking <b>Today</b>.</div>
+
+<label>Notes <small>(optional)</small></label><textarea name="notes" placeholder="Customers asking for it, flavor, size…"></textarea>
+</section><button class="btn" type="submit">Report Low Stock</button></form>
+<p class="foot">Varsa GROUP LLC · answers go to the Varsa Cashier Tracker sheet</p></div>
+<div class="toast" id="toast"></div>
+<script src="config.js"></script><script src="app.js"></script><script>
+window.onChange=()=>{const out=val('stock_level')==='Out of Stock'||['Already out','Less than 1 day'].includes(val('days_last'));
+ document.getElementById('urgeNote').classList.toggle('hidden',!(out&&val('urgency')&&val('urgency')!=='Today'));};
+</script></body></html>

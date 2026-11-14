@@ -1,0 +1,42 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Fuel Price Change · Varsa Cashier Tools</title><link rel="stylesheet" href="styles.css">
+<style>:root{--a1:#3b82f6;--a2:#8b5cf6}</style></head><body><div class="wrap">
+<header class="hero"><div class="top"><a class="back" href="index.html">← Home</a><span class="brand">Sunshine Food Mart</span></div>
+<h1><span class="emo">⛽</span>Fuel Price Change</h1><p>When an MPC price notice comes in: update the sign and the pumps (Passport), then post a photo of the sign.</p></header>
+<form data-form="fuel_price" novalidate autocomplete="off">
+<section class="card"><h2><span class="dot"></span>Who &amp; where</h2>
+<div class="q">Store</div><div class="chips" id="storeBox" data-name="store" data-req></div>
+<label>Your name</label><input type="text" name="cashier" required placeholder="Your name">
+</section>
+
+<section class="card"><h2><span class="dot"></span>New prices <small style="font-weight:400;color:var(--muted)">(per gallon)</small></h2>
+<div class="grid"><div><label>Regular</label><input type="number" name="regular" step="0.001" min="0" inputmode="decimal" required placeholder="2.999"></div>
+<div><label>Mid</label><input type="number" name="mid" step="0.001" min="0" inputmode="decimal" placeholder="3.399"></div>
+<div><label>Premium</label><input type="number" name="premium" step="0.001" min="0" inputmode="decimal" placeholder="3.799"></div>
+<div><label>Diesel</label><input type="number" name="diesel" step="0.001" min="0" inputmode="decimal" placeholder="3.599"></div></div>
+<div class="grid"><div><label>MPC notice time</label><input type="time" name="mpc_time" required></div>
+<div><label>Change finished at</label><input type="time" name="done_time" required></div></div>
+<div class="note warn hidden" id="late">⏱️ More than 30 minutes after the MPC notice. Please make price changes right away.</div>
+<div class="note warn hidden" id="order">Prices usually go Regular &lt; Mid &lt; Premium. Double-check what you typed.</div>
+</section>
+<section class="card"><h2><span class="dot"></span>Confirm</h2>
+<div class="q">Price sign updated?</div><div class="chips" data-name="sign_updated" data-req data-options="Yes|No"></div>
+<div class="q">Pumps / Passport updated?</div><div class="chips" data-name="pumps_updated" data-req data-options="Yes|No"></div>
+<div class="q">Photo of the sign posted to the group?</div><div class="chips" data-name="photo_posted" data-req data-options="Yes|No"></div>
+<input type="hidden" name="incomplete">
+<div class="follow" data-if="incomplete=Yes"><div class="note bad" style="margin-top:4px">Not finished? Call <b>Varun</b> (2nd) or <b>Sanchari</b> (backup) now.</div>
+<label>What's not done and why?</label><textarea name="reason" required placeholder="e.g. Passport error, sign letters missing"></textarea></div>
+<div class="q">Done by</div><div class="chips" data-name="done_by" data-req data-options="ESM|Varun|Sanchari|Other"></div>
+<div class="follow" data-if="done_by=Other"><label>Name</label><input type="text" name="done_by_other" required></div>
+<label>Notes <small>(optional)</small></label><textarea name="notes"></textarea>
+</section><button class="btn" type="submit">Submit Price Change</button></form>
+<p class="foot">Varsa GROUP LLC · answers go to the Varsa Cashier Tracker sheet</p></div>
+<div class="toast" id="toast"></div>
+<script src="config.js"></script><script src="app.js"></script><script>
+(function(){const t=document.querySelector('[name=done_time]');const d=new Date();t.dataset.default=String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');t.value=t.dataset.default;})();
+const mins=s=>{if(!s)return NaN;const[a,b]=s.split(':');return +a*60+ +b};
+window.onChange=()=>{document.querySelector('[name=incomplete]').value=['sign_updated','pumps_updated','photo_posted'].some(k=>val(k)==='No')?'Yes':'';
+ const g=mins(val('done_time'))-mins(val('mpc_time'));document.getElementById('late').classList.toggle('hidden',!(g>30));
+ const r=parseFloat(val('regular')),m=parseFloat(val('mid')),p=parseFloat(val('premium'));
+ document.getElementById('order').classList.toggle('hidden',!((!isNaN(r)&&!isNaN(m)&&m<r)||(!isNaN(m)&&!isNaN(p)&&p<m)||(!isNaN(r)&&!isNaN(p)&&p<r)));};
+</script></body></html>

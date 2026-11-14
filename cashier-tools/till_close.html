@@ -1,0 +1,56 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Till Close · Varsa Cashier Tools</title><link rel="stylesheet" href="styles.css">
+<style>:root{--a1:#22c55e;--a2:#14b8a6}</style></head><body><div class="wrap">
+<header class="hero"><div class="top"><a class="back" href="index.html">← Home</a><span class="brand">Sunshine Food Mart</span></div>
+<h1><span class="emo">💵</span>Till Close</h1><p>Every cashier, end of every shift. Till close only, not a store close.</p></header>
+<form data-form="till_close" novalidate autocomplete="off">
+<section class="card"><h2><span class="dot"></span>Who &amp; where</h2>
+<div class="q">Store</div><div class="chips" id="storeBox" data-name="store" data-req></div>
+<label>Cashier name</label><input type="text" name="cashier" required placeholder="Your name">
+</section>
+
+<section class="card"><h2><span class="dot"></span>Shift</h2>
+<div class="chips" data-name="shift" data-req data-options="Day|Night"></div>
+</section>
+<section class="card"><h2><span class="dot"></span>Cash count</h2>
+<div class="grid"><div><label>Starting cash</label><input type="number" name="start_cash" step="0.01" min="0" inputmode="decimal" required data-default="300"></div>
+<div><label>Left in till</label><input type="number" name="left_in_till" step="0.01" min="0" inputmode="decimal" required data-default="300"></div></div>
+<label>Cash counted in the bundle <small>(everything except the $300)</small></label><input type="number" name="cash_counted" step="0.01" min="0" inputmode="decimal" required placeholder="0.00">
+<label>Cash expected on the till report <small>(optional)</small></label><input type="number" name="expected_cash" step="0.01" min="0" inputmode="decimal" placeholder="0.00">
+<input type="hidden" name="difference"><input type="hidden" name="mismatch">
+<div class="note warn hidden" id="float">⚠️ The till must start and end with exactly <b>$300</b>. Explain below and tell the ESM.</div>
+<div class="note ok hidden" id="match"></div>
+<div class="note bad hidden" id="mis"></div>
+<div class="follow" data-if="mismatch=Yes"><label>Why doesn't it match?</label><textarea name="mismatch_reason" required placeholder="e.g. gave wrong change, paid out a lottery ticket, not sure"></textarea></div>
+</section>
+<section class="card"><h2><span class="dot"></span>Bundle</h2>
+<div class="q">Rubber band + slip with the amount in the bundle?</div><div class="chips" data-name="slip_in_bundle" data-req data-options="Yes|No"></div>
+<div class="note warn" data-if="slip_in_bundle=No">Put a rubber band around the cash and add the slip with the amount written on it.</div>
+<div class="q">Photo of the banded cash + slip posted to the group?</div><div class="chips" data-name="photo_posted" data-req data-options="Yes|No"></div>
+<div class="note bad" data-if="photo_posted=No" data-block>📸 Post the photo of the banded cash and slip in the group first, then submit.</div>
+</section>
+<section class="card"><h2><span class="dot"></span>11 PM store close</h2>
+<div class="q">Are you also doing the 11 PM store close?</div><div class="chips" data-name="store_close" data-req data-options="Yes|No"></div>
+<div class="follow" data-if="store_close=Yes">
+<div class="note info">Run the store close (day close) report at 11:00 PM. Bills facing the same way, safe drop slip in the bundle, $300 stays in the till.</div>
+<div class="q">Earlier bundles checked against their slips?</div><div class="chips" data-name="bundles_verified" data-req data-options="Yes|No|No earlier bundles"></div>
+<div class="q">Bundle + safe drop slip in the night drop safe?</div><div class="chips" data-name="night_drop" data-req data-options="Yes|No"></div>
+<div class="q">Reports stapled and left on the table?</div><div class="chips" data-name="reports_left" data-req data-options="Yes|No"></div>
+<div class="note warn" data-if="bundles_verified=No">Tell the ESM which bundle didn't match its slip.</div>
+<div class="note bad" data-if="night_drop=No">Cash must go in the night drop safe before you leave.</div>
+</div></section>
+<section class="card"><label style="margin-top:0">Notes <small>(optional)</small></label><textarea name="notes" placeholder="Anything the ESM should know"></textarea></section>
+<button class="btn" type="submit">Submit Till Close</button></form>
+<p class="foot">Varsa GROUP LLC · answers go to the Varsa Cashier Tracker sheet</p></div>
+<div class="toast" id="toast"></div>
+<script src="config.js"></script><script src="app.js"></script><script>
+const n=x=>parseFloat(val(x));const $i=id=>document.getElementById(id);
+window.onChange=()=>{const s=n('start_cash'),l=n('left_in_till'),c=n('cash_counted'),ex=n('expected_cash');
+ const off=(!isNaN(s)&&s!==300)||(!isNaN(l)&&l!==300);$i('float').classList.toggle('hidden',!off);
+ let mis=off,dtxt='';const D=document.querySelector('[name=difference]');D.value='';
+ if(!isNaN(c)&&!isNaN(ex)){const d=Math.round((c-ex)*100)/100;D.value=d.toFixed(2);
+  $i('match').classList.toggle('hidden',d!==0);$i('match').textContent='✅ Bundle matches the report: $'+c.toFixed(2);
+  $i('mis').classList.toggle('hidden',d===0);$i('mis').innerHTML='❗ '+(d<0?'SHORT':'OVER')+' <span class="big">$'+Math.abs(d).toFixed(2)+'</span> vs the report. Recount once, then explain below.';
+  if(d!==0)mis=true;}else{$i('match').classList.add('hidden');$i('mis').classList.add('hidden');}
+ document.querySelector('[name=mismatch]').value=mis?'Yes':'';};
+</script></body></html>

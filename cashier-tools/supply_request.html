@@ -1,0 +1,33 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Supply Request · Varsa Cashier Tools</title><link rel="stylesheet" href="styles.css">
+<style>:root{--a1:#14b8a6;--a2:#22d3ee}</style></head><body><div class="wrap">
+<header class="hero"><div class="top"><a class="back" href="index.html">← Home</a><span class="brand">Sunshine Food Mart</span></div>
+<h1><span class="emo">🧻</span>Supply Request</h1><p>Bags, rubber bands, cleaning supplies, receipt paper and other store supplies.</p></header>
+<form data-form="supply_request" novalidate autocomplete="off">
+<section class="card"><h2><span class="dot"></span>Who &amp; where</h2>
+<div class="q">Store</div><div class="chips" id="storeBox" data-name="store" data-req></div>
+<label>Cashier name</label><input type="text" name="cashier" required placeholder="Your name">
+</section>
+
+<section class="card"><h2><span class="dot"></span>What's needed?</h2>
+<div class="chips" data-name="item" data-req data-options="Plastic Bags|Brown Bags|Rubber Bands|Cleaning Supplies|Toilet Paper/Paper Towels|Receipt Paper|Gloves|Trash Bags|Other"></div>
+<div class="follow" data-if="item=Other"><label>What item?</label><input type="text" name="item_other" required placeholder="Describe the item"></div>
+<div class="follow" data-if="item=Cleaning Supplies"><label>Which cleaning supplies?</label><input type="text" name="details" required placeholder="e.g. mop heads, bleach, glass cleaner"></div>
+<div class="q">Stock level</div><div class="chips" data-name="stock_level" data-req data-options="Low|Out"></div>
+</section>
+<section class="card"><h2><span class="dot"></span>Ordering info</h2>
+<div class="grid"><div><label>Qty on hand right now</label><input type="number" name="qty_on_hand" min="0" inputmode="numeric" placeholder="0"></div>
+<div><label>How long can we last?</label><select name="days_last" required><option value="">Choose…</option><option>Already out</option><option>Less than 1 day</option><option>1–2 days</option><option>3–5 days</option><option>A week or more</option></select></div></div>
+<div class="q">Usual vendor <small>(if you know)</small></div><div class="chips vendors" data-name="vendor"></div>
+<label>Suggested order quantity</label><input type="text" name="order_qty" placeholder="e.g. 2 cases, 5 packs">
+<div class="q">How urgent?</div><div class="chips" data-name="urgency" data-req data-options="Today|This week|Next order"></div>
+<div class="note warn hidden" id="urgeNote">⏰ It's out or will run out within a day — consider picking <b>Today</b>.</div>
+
+<div data-if="item!=Cleaning Supplies"><label>Details <small>(optional)</small></label><textarea name="details" placeholder="Size, brand, anything else"></textarea></div>
+</section><button class="btn" type="submit">Send Request</button></form>
+<p class="foot">Varsa GROUP LLC · answers go to the Varsa Cashier Tracker sheet</p></div>
+<div class="toast" id="toast"></div>
+<script src="config.js"></script><script src="app.js"></script><script>
+window.onChange=()=>{const out=/out/i.test(val('stock_level'))||['Already out','Less than 1 day'].includes(val('days_last'));
+ document.getElementById('urgeNote').classList.toggle('hidden',!(out&&val('urgency')&&val('urgency')!=='Today'));};
+</script></body></html>

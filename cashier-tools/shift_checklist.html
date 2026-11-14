@@ -1,0 +1,48 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Start of Shift · Varsa Cashier Tools</title><link rel="stylesheet" href="styles.css">
+<style>:root{--a1:#ec4899;--a2:#f43f5e}</style></head><body><div class="wrap">
+<header class="hero"><div class="top"><a class="back" href="index.html">← Home</a><span class="brand">Sunshine Food Mart</span></div>
+<h1><span class="emo">✅</span>Start of Shift</h1><p>Do this in the first 5–10 minutes while the other cashier is still here.</p></header>
+<form data-form="shift_checklist" novalidate autocomplete="off">
+<section class="card"><h2><span class="dot"></span>Who &amp; where</h2>
+<div class="q">Store</div><div class="chips" id="storeBox" data-name="store" data-req></div>
+<label>Cashier name</label><input type="text" name="cashier" required placeholder="Your name">
+</section>
+
+<section class="card"><h2><span class="dot"></span>Shift</h2>
+<div class="chips" data-name="shift" data-req data-options="Day|Night"></div>
+<div class="note info" data-if="shift=Night">🌙 Night shift: a <b>full, proper washroom cleaning</b> is required tonight.</div>
+</section>
+<section class="card"><h2><span class="dot"></span>Till</h2>
+<div class="q">Did you start with exactly $300?</div><div class="chips" data-name="started_300" data-req data-options="Yes|No"></div>
+<div class="follow" data-if="started_300=No"><label>How much was in the till?</label><input type="number" name="start_actual" step="0.01" min="0" inputmode="decimal" required placeholder="0.00">
+<div class="note bad">💵 Tell the ESM right away. Every till must start at $300.</div></div>
+</section>
+<section class="card"><h2><span class="dot"></span>Trash</h2>
+<div class="q">Inside trash done?</div><div class="chips" data-name="inside_trash" data-req data-options="Yes|No"></div>
+<div class="note warn" data-if="inside_trash=No">🗑️ Every cashier does the inside trash every shift. Please do it now.</div>
+<div class="q">Outside trash checked?</div><div class="chips" data-name="outside_trash" data-req data-options="Yes|No"></div>
+<div class="follow" data-if="outside_trash=Yes"><div class="q">Was it full?</div><div class="chips" data-name="outside_result" data-req data-options="Full – I emptied it|Not full – skipped"></div></div>
+<div class="note warn" data-if="outside_trash=No">Please go check the outside cans. Empty them if they're full.</div>
+</section>
+<section class="card"><h2><span class="dot"></span>Washroom</h2>
+<div class="q">Washroom condition</div><div class="chips" data-name="washroom_condition" data-req data-options="Clean &amp; stocked|Needed light cleaning|Very dirty"></div>
+<div class="follow" data-if="washroom_condition=Needed light cleaning|Very dirty"><div class="q">Did you clean it?</div><div class="chips" data-name="washroom_cleaned" data-req data-options="Yes|No"></div>
+<div class="note warn" data-if="washroom_cleaned=No">🧽 Please clean it now.</div></div>
+<div class="q">Washroom photo posted to the group?</div><div class="chips" data-name="washroom_photo" data-req data-options="Yes|No"></div>
+<div class="note warn" data-if="washroom_photo=No">📸 Take a washroom photo and post it in the group now.</div>
+</section>
+<section class="card"><h2><span class="dot"></span>Previous shift</h2>
+<div class="q">Did the last shift leave trash, a mess, or other problems?</div><div class="chips" data-name="prev_issues" data-req data-options="Yes|No"></div>
+<div class="follow" data-if="prev_issues=Yes"><label>What did you find?</label><textarea name="prev_details" required placeholder="e.g. trash full, floor dirty, empty shelves"></textarea>
+<div class="q">Photo posted to the group?</div><div class="chips" data-name="prev_photo" data-req data-options="Yes|No"></div>
+<div class="note warn" data-if="prev_photo=No">📸 Take a photo and post it in the group.</div></div>
+</section>
+<section class="card"><h2><span class="dot"></span>Today's extra tasks</h2>
+<label>Ask the ESM: "What are my additional tasks today?"</label><textarea name="esm_tasks" required placeholder="e.g. restock cooler, clean shelves in aisle 2"></textarea>
+<div class="q">Posted your tasks in the group?</div><div class="chips" data-name="tasks_posted" data-req data-options="Yes|No"></div>
+<div class="note warn" data-if="tasks_posted=No">Please post today's tasks in the group.</div>
+</section><button class="btn" type="submit">Submit Checklist</button></form>
+<p class="foot">Varsa GROUP LLC · answers go to the Varsa Cashier Tracker sheet</p></div>
+<div class="toast" id="toast"></div>
+<script src="config.js"></script><script src="app.js"></script></body></html>
