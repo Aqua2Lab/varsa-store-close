@@ -1,0 +1,23 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Cashier Post Audit · Varsa Manager Tools</title><link rel="stylesheet" href="styles.css">
+<style>:root{--a1:#ec4899;--a2:#8b5cf6}</style></head><body><div class="wrap">
+<header class="hero"><div class="top"><a class="back" href="index.html">← Manager Home</a><span class="brand">Varsa Group LLC</span></div>
+<h1><span class="emo">📸</span>Cashier Post Audit</h1><p>Group audit by end of day: did each cashier post washroom, trash, till and task photos?</p></header>
+<form data-form="post_audit" novalidate autocomplete="off">
+<section class="card"><h2><span class="dot"></span>Who &amp; where</h2>
+<div class="q">Store</div><div class="chips" id="storeBox" data-name="store" data-req></div>
+<label>Audited by</label><input type="text" name="cashier" required list="mgrs" placeholder="Varun, Sanchari, Jonathan…"><datalist id="mgrs"><option>Varun</option><option>Sanchari</option><option>Jonathan</option></datalist>
+</section>
+<section class="card"><h2><span class="dot"></span>Shift</h2>
+<label>Shift date</label><input type="date" name="audit_date" data-today="today" required><div class="q">Shift</div><div class="chips" data-name="shift" data-req data-options="Day|Night"></div><label>Cashier</label><input type="text" name="shift_cashier" placeholder="Name" required>
+</section><section class="card"><h2><span class="dot"></span>Photos in the group</h2>
+<div class="q">Washroom photo</div><div class="chips" data-name="washroom_photo" data-req data-options="Posted|Missed|Late"></div><div class="q">Trash photo</div><div class="chips" data-name="trash_photo" data-req data-options="Posted|Missed|Late"></div><div class="q">Till close photo</div><div class="chips" data-name="till_photo" data-req data-options="Posted|Missed|Late"></div><div class="q">Task photos</div><div class="chips" data-name="tasks_photo" data-req data-options="Posted|Missed|Late|No tasks"></div>
+</section><section class="card"><h2><span class="dot"></span>Action</h2>
+<label>What was missed?</label><textarea name="missed" placeholder=""></textarea><div class="q">Action taken</div><div class="chips" data-name="action" data-req data-options="None needed|Reminded cashier|Told ESM|Written warning"></div>
+</section>
+<button class="btn" type="submit">Save Post Audit</button></form>
+<p class="foot">Varsa GROUP LLC · Manager Tools · answers go to the Varsa Cashier Tools sheet</p></div>
+<div class="toast" id="toast"></div>
+<script>window.RECENT_COLS=[["audit_date", "Date"], ["shift", "Shift"], ["shift_cashier", "Cashier"], ["washroom_photo", "Washroom"], ["trash_photo", "Trash"], ["till_photo", "Till"]];</script>
+<script src="config.js"></script><script src="app.js"></script>
+</body></html>

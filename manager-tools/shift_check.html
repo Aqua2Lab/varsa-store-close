@@ -1,0 +1,27 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>ESM Shift Check · Varsa Manager Tools</title><link rel="stylesheet" href="styles.css">
+<style>:root{--a1:#ec4899;--a2:#f43f5e}</style></head><body><div class="wrap">
+<header class="hero"><div class="top"><a class="back" href="index.html">← Manager Home</a><span class="brand">Varsa Group LLC</span></div>
+<h1><span class="emo">📋</span>ESM Shift Check</h1><p>The ESM Daily Group Check-in: one per store, per shift. Then post it in the WhatsApp group.</p></header>
+<form data-form="shift_check" novalidate autocomplete="off">
+<section class="card"><h2><span class="dot"></span>Who &amp; where</h2>
+<div class="q">Store</div><div class="chips" id="storeBox" data-name="store" data-req></div>
+<label>ESM name</label><input type="text" name="cashier" required list="mgrs" placeholder="Varun, Sanchari, Jonathan…"><datalist id="mgrs"><option>Varun</option><option>Sanchari</option><option>Jonathan</option></datalist>
+</section>
+<section class="card"><h2><span class="dot"></span>Shift</h2>
+<label>Shift date</label><input type="date" name="shift_date" data-today="today" required><div class="q">Shift</div><div class="chips" data-name="shift" data-req data-options="Day|Night"></div><label>Cashier</label><input type="text" name="shift_cashier" placeholder="Name" required>
+</section><section class="card"><h2><span class="dot"></span>Every shift</h2>
+<div class="q">Till start $300</div><div class="chips" data-name="till_start" data-req data-options="Done ✅|Missed ❌"></div><div class="q">Inside trash</div><div class="chips" data-name="inside_trash" data-req data-options="Done ✅|Missed ❌"></div><div class="q">Outside trash</div><div class="chips" data-name="outside_trash" data-req data-options="Done ✅|Missed ❌"></div><div class="q">Washroom photo</div><div class="chips" data-name="washroom_photo" data-req data-options="Done ✅|Missed ❌"></div><label>ESM tasks given</label><input type="text" name="esm_tasks" placeholder="e.g. face chips, mop back"><div class="q">ESM tasks done</div><div class="chips" data-name="esm_tasks_done" data-req data-options="Done ✅|Missed ❌|Partly"></div><div class="q">Till close photo</div><div class="chips" data-name="till_close_photo" data-req data-options="Done ✅|Missed ❌"></div><div class="grid"><div><label>Till close $</label><input type="number" name="till_amount" step="0.01" inputmode="decimal" placeholder="0.00"></div><div><label>Short/Over $ <small>(minus = short)</small></label><input type="number" name="short_over" step="0.01" inputmode="decimal" placeholder="0.00"></div></div>
+</section><div class="card" data-if="shift=Night"><h2 style="margin-top:6px"><span class="dot"></span>Night only</h2><div class="q">Washroom deep clean</div><div class="chips" data-name="washroom_deep" data-req data-options="Done ✅|Missed ❌"></div><div class="q">Expiry check + old stock to front</div><div class="chips" data-name="expiry_rotation" data-req data-options="Done ✅|Missed ❌"></div><div class="q">Products faced, all aisles</div><div class="chips" data-name="faced" data-req data-options="Done ✅|Missed ❌"></div><div class="q">11 PM store close + night drop</div><div class="chips" data-name="store_close_drop" data-req data-options="Done ✅|Missed ❌"></div></div><section class="card"><h2><span class="dot"></span>Wrap up</h2>
+<label>Issues / follow-up</label><textarea name="issues" placeholder="None, or details + reason for each ❌"></textarea><div class="q">Posted in the WhatsApp group?</div><div class="chips" data-name="posted_group" data-req data-options="Yes|Not yet"></div><button type="button" class="mini" id="copyMsg" style="margin-top:14px">📋 Copy WhatsApp message</button>
+</section>
+<button class="btn" type="submit">Save Shift Check</button></form>
+<p class="foot">Varsa GROUP LLC · Manager Tools · answers go to the Varsa Cashier Tools sheet</p></div>
+<div class="toast" id="toast"></div>
+<script>window.RECENT_COLS=[["shift_date", "Date"], ["shift", "Shift"], ["shift_cashier", "Cashier"], ["till_start", "$300"], ["till_close_photo", "Till"], ["short_over", "S/O"]];</script>
+<script src="config.js"></script><script src="app.js"></script><script>document.getElementById('copyMsg').addEventListener('click',()=>{const m=s=>(val(s)||'').startsWith('Done')?'✅':(val(s)?'❌':'⬜');
+ let t='📋 SHIFT CHECK – '+val('store')+' – '+val('shift_date')+' – Shift: '+val('shift')+'\nCashier: '+val('shift_cashier')+'\n'+m('till_start')+' Till start $300\n'+m('inside_trash')+' Inside trash\n'+m('outside_trash')+' Outside trash\n'+m('washroom_photo')+' Washroom photo\n'+m('esm_tasks_done')+' ESM tasks done: '+val('esm_tasks')+'\n'+m('till_close_photo')+' Till close photo ($ '+val('till_amount')+' | Short/Over $ '+val('short_over')+')';
+ if(val('shift')==='Night')t+='\nNight only:\n'+m('washroom_deep')+' Washroom deep clean\n'+m('expiry_rotation')+' Expiry check + old stock to front\n'+m('faced')+' Products faced, all aisles\n'+m('store_close_drop')+' 11 PM store close + night drop';
+ t+='\nIssues / Follow-up: '+(val('issues')||'None')+'\n– '+val('cashier')+' (ESM)';
+ (navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(()=>alert('Copied. Paste it in the WhatsApp group.'),()=>prompt('Copy this:',t));});</script>
+</body></html>

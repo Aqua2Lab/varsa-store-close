@@ -1,0 +1,38 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Cashier Activity · Varsa Manager Tools</title><link rel="stylesheet" href="styles.css">
+<style>:root{--a1:#f97316;--a2:#ec4899}.wrap{max-width:1100px}</style></head><body><div class="wrap">
+<header class="hero"><div class="top"><a class="back" href="index.html">← Manager Home</a><span class="brand">Varsa Group LLC</span></div>
+<h1><span class="emo">👀</span>Cashier Activity</h1><p>Latest Cashier Tools entries. Rows needing attention are flagged. Change Status / ESM Verified in the sheet.</p></header>
+<section class="card"><div class="filters">
+<div><label>Store</label><select id="fStore"><option value="">Both stores</option></select></div>
+<div><label>Show</label><select id="fOpen"><option value="">All entries</option><option value="1">Only flagged</option></select></div>
+<div style="flex:0 0 auto"><button type="button" class="mini" id="reload">↻ Refresh</button></div></div>
+<div class="stats" id="sum" style="margin-top:14px"></div></section>
+<div id="sections"><section class="card"><span class="muted">Loading…</span></section></div>
+<p class="foot">Varsa GROUP LLC · Manager Tools</p></div>
+<script src="config.js"></script><script src="mgr.js"></script><script>
+const $=id=>document.getElementById(id);let DATA={};
+STORES.forEach(s=>$('fStore').insertAdjacentHTML('beforeend','<option>'+esc(s)+'</option>'));
+const no=v=>/^(no|not yet)/i.test(String(v||''));
+const isOpen=r=>!r._status||/open/i.test(r._status);
+const TABS=[
+ {k:'till_close',t:'💵 Till Close',c:[['shift','Shift'],['cash_counted','Counted'],['expected_cash','Expected'],['difference','Diff'],['mismatch_reason','Reason'],['_esm','ESM OK']],
+  flag:r=>{const d=parseFloat(String(r.difference).replace(/[$,]/g,''));return (!isNaN(d)&&d!==0&&!r._esm)?(d<0?'Short':'Over'):(no(r.photo_posted)||no(r.night_drop)?'Check':'');}},
+ {k:'product_issue',t:'🏷️ Product Issues',c:[['issue_type','Issue'],['item_name','Item'],['upc','UPC'],['details','Details'],['_status','Status']],flag:r=>isOpen(r)?'Open':''},
+ {k:'supply_request',t:'🧻 Supply Requests',c:[['item','Item'],['item_other','Other'],['stock_level','Stock'],['urgency','Urgency'],['_status','Status']],flag:r=>isOpen(r)?'Open':''},
+ {k:'low_stock',t:'📦 Low Stock',c:[['product_name','Product'],['stock_level','Stock'],['qty_on_hand','Qty'],['vendor','Vendor'],['urgency','Urgency'],['_status','Status']],flag:r=>isOpen(r)?'Open':''},
+ {k:'shift_checklist',t:'✅ Start of Shift',c:[['shift','Shift'],['started_300','$300'],['inside_trash','Trash'],['washroom_cleaned','Washroom'],['prev_issues','Prev. issues'],['tasks_posted','Tasks']],
+  flag:r=>(no(r.started_300)||no(r.washroom_photo)||no(r.tasks_posted)||/^yes/i.test(r.prev_issues))?'Check':''},
+ {k:'fuel_price',t:'⛽ Fuel Price',c:[['regular','Reg'],['mid','Mid'],['premium','Prem'],['diesel','Diesel'],['sign_updated','Sign'],['pumps_updated','Pumps'],['reason','Not done because']],
+  flag:r=>(no(r.sign_updated)||no(r.pumps_updated)||no(r.photo_posted))?'Not done':''}];
+function render(){const st=$('fStore').value,only=$('fOpen').value;
+ $('sum').innerHTML=TABS.map(T=>{const rows=(DATA[T.k]||[]).filter(r=>!st||r.store===st),f=rows.filter(T.flag).length;
+  return '<div class="stat"><b>'+T.t+'</b><div class="v">'+(f?'<span class="short">'+f+' flagged</span>':'<span class="over">All clear</span>')+'</div><small>'+rows.length+' recent</small></div>';}).join('');
+ $('sections').innerHTML=TABS.map(T=>{let rows=(DATA[T.k]||[]).filter(r=>!st||r.store===st);if(only)rows=rows.filter(T.flag);
+  const body=rows.length?'<div class="tblwrap"><table><thead><tr><th>⚑</th><th>When</th><th>Store</th><th>By</th>'+T.c.map(c=>'<th>'+c[1]+'</th>').join('')+'</tr></thead><tbody>'+rows.map(r=>{const f=T.flag(r);
+   return '<tr class="'+(f==='Short'?'r-short':f?'flag':'')+'"><td>'+(f?'<span class="badge '+(f==='Over'?'ok':f==='Check'?'warn':'open')+'">'+f+'</span>':'')+'</td><td>'+esc(String(r._ts).replace(/:\d\d$/,''))+'</td><td>'+esc(short(r.store))+'</td><td>'+esc(r.cashier)+'</td>'+T.c.map(c=>'<td>'+esc(r[c[0]])+'</td>').join('')+'</tr>';}).join('')+'</tbody></table></div>':'<span class="muted">Nothing here.</span>';
+  return '<section class="card recent"><div class="recent-head"><b>'+T.t+'</b><span class="muted">'+rows.length+'</span></div>'+body+'</section>';}).join('');}
+function load(){$('sections').innerHTML='<section class="card"><span class="muted">Loading…</span></section>';
+ jsonp({action:'activity',limit:100}).then(res=>{DATA=res.tabs||{};render();}).catch(e=>{$('sections').innerHTML='<section class="card"><span class="muted">Could not load: '+esc(e.message)+'</span></section>';});}
+['fStore','fOpen'].forEach(id=>$(id).addEventListener('change',render));$('reload').addEventListener('click',load);load();
+</script></body></html>

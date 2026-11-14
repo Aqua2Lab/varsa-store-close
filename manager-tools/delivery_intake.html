@@ -1,0 +1,23 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Delivery Intake · Varsa Manager Tools</title><link rel="stylesheet" href="styles.css">
+<style>:root{--a1:#22c55e;--a2:#3b82f6}</style></head><body><div class="wrap">
+<header class="hero"><div class="top"><a class="back" href="index.html">← Manager Home</a><span class="brand">Varsa Group LLC</span></div>
+<h1><span class="emo">🚚</span>Delivery Intake</h1><p>Whoever is at the store (Varun, Sanchari, Jonathan). Check while the vendor rep is still here.</p></header>
+<form data-form="delivery_intake" novalidate autocomplete="off">
+<section class="card"><h2><span class="dot"></span>Who &amp; where</h2>
+<div class="q">Store</div><div class="chips" id="storeBox" data-name="store" data-req></div>
+<label>Received by</label><input type="text" name="cashier" required list="mgrs" placeholder="Varun, Sanchari, Jonathan…"><datalist id="mgrs"><option>Varun</option><option>Sanchari</option><option>Jonathan</option></datalist>
+</section>
+<section class="card"><h2><span class="dot"></span>Delivery</h2>
+<div class="q">Vendor</div><div class="chips vendors" data-name="vendor" data-req data-options=""></div><div class="follow" data-if="vendor=Other / Not sure"><label>Vendor name</label><input type="text" name="vendor_other" placeholder="" required></div><div class="grid"><div><label>Invoice #</label><input type="text" name="invoice_no" placeholder=""></div><div><label>Invoice total</label><input type="number" name="invoice_total" step="0.01" inputmode="decimal" placeholder="0.00" required></div></div>
+</section><section class="card"><h2><span class="dot"></span>Checks</h2>
+<div class="q">Matches the invoice and the order? <small>(count, sizes, pricing)</small></div><div class="chips" data-name="matches_order" data-req data-options="Yes|No"></div><div class="q">Expiry dates and damage checked?</div><div class="chips" data-name="expiry_damage" data-req data-options="Yes|No"></div><div class="q">New stock put behind the old?</div><div class="chips" data-name="rotated" data-req data-options="Yes|No|Not yet"></div><div class="q">Any shorts, damages or credits?</div><div class="chips" data-name="shorts" data-req data-options="Yes|No"></div><div class="follow" data-if="shorts=Yes"><label>What was short / damaged?</label><textarea name="short_details" placeholder="" required></textarea><label>Credit amount</label><input type="number" name="credit_amount" step="0.01" inputmode="decimal" placeholder="0.00"><div class="q">Vendor rep initialed them on the invoice?</div><div class="chips" data-name="rep_initialed" data-req data-options="Yes|No"></div><div class="note bad" data-if="rep_initialed=No">Get the rep to initial the shorts before they leave.</div></div><div class="q">Signed invoice photo posted in the group?</div><div class="chips" data-name="photo_posted" data-req data-options="Yes|Not yet"></div><div class="note warn" data-if="photo_posted=Not yet">Post the signed invoice photo today. Leave the original in the office for Varun.</div>
+</section><section class="card"><h2><span class="dot"></span>Payment</h2>
+<div class="q">How is it being paid?</div><div class="chips" data-name="payment" data-req data-options="Not paid (Varun pays)|Check|Cash from till|Account / ACH"></div><div class="follow" data-if="payment=Cash from till"><div class="q">Did Varun approve cash from the till?</div><div class="chips" data-name="cash_approved" data-req data-options="Yes|No"></div><div class="note bad" data-if="cash_approved=No" data-block>❌ No cash to vendors from the till without Varun's approval.</div></div><label>Notes</label><textarea name="notes" placeholder=""></textarea>
+</section>
+<button class="btn" type="submit">Save Delivery</button></form>
+<p class="foot">Varsa GROUP LLC · Manager Tools · answers go to the Varsa Cashier Tools sheet</p></div>
+<div class="toast" id="toast"></div>
+<script>window.RECENT_COLS=[["vendor", "Vendor"], ["invoice_no", "Invoice"], ["invoice_total", "Total"], ["shorts", "Shorts"], ["payment", "Payment"], ["_status", "Status"]];</script>
+<script src="config.js"></script><script src="app.js"></script>
+</body></html>

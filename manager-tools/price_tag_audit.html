@@ -1,0 +1,21 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Price Tag Audit · Varsa Manager Tools</title><link rel="stylesheet" href="styles.css">
+<style>:root{--a1:#f97316;--a2:#ec4899}</style></head><body><div class="wrap">
+<header class="hero"><div class="top"><a class="back" href="index.html">← Manager Home</a><span class="brand">Varsa Group LLC</span></div>
+<h1><span class="emo">🏷️</span>Price Tag Audit</h1><p>Every item that needs a price shows one, especially novelty. Missing tags up within 48 hours.</p></header>
+<form data-form="price_tag_audit" novalidate autocomplete="off">
+<section class="card"><h2><span class="dot"></span>Who &amp; where</h2>
+<div class="q">Store</div><div class="chips" id="storeBox" data-name="store" data-req></div>
+<label>Audited by</label><input type="text" name="cashier" required list="mgrs" placeholder="Varun, Sanchari, Jonathan…"><datalist id="mgrs"><option>Varun</option><option>Sanchari</option><option>Jonathan</option></datalist>
+</section>
+<section class="card"><h2><span class="dot"></span>Check</h2>
+<div class="q">Areas checked</div><div class="chips" data-name="areas" data-req data-multi data-options="Novelty|Vape|Tobacco|Grocery|Candy|Chips|Coolers|Automotive|All"></div><div class="grid"><div><label>Items missing a price</label><input type="number" name="missing_count" min="0" inputmode="numeric" placeholder="0" required></div><div><label>Wrong price tags</label><input type="number" name="wrong_count" min="0" inputmode="numeric" placeholder="0"></div></div><div class="q">All novelty items priced?</div><div class="chips" data-name="novelty_priced" data-req data-options="Yes|No"></div><label>Item list <small>(name + UPC or NA)</small></label><textarea name="items" placeholder=""></textarea>
+</section><section class="card"><h2><span class="dot"></span>Fix</h2>
+<div class="q">Tags printed and put up?</div><div class="chips" data-name="tags_printed" data-req data-options="Yes|Not yet|Nothing missing"></div><div class="follow" data-if="tags_printed=Not yet"><label>Due date (48 hrs)</label><input type="date" name="due_date" required></div><label>Notes</label><textarea name="notes" placeholder=""></textarea>
+</section>
+<button class="btn" type="submit">Save Price Tag Audit</button></form>
+<p class="foot">Varsa GROUP LLC · Manager Tools · answers go to the Varsa Cashier Tools sheet</p></div>
+<div class="toast" id="toast"></div>
+<script>window.RECENT_COLS=[["areas", "Areas"], ["missing_count", "Missing"], ["wrong_count", "Wrong"], ["novelty_priced", "Novelty"], ["tags_printed", "Printed"], ["_status", "Status"]];</script>
+<script src="config.js"></script><script src="app.js"></script><script>window.onChange=()=>{const d=document.querySelector('[name=due_date]');if(d&&!d.value&&val('tags_printed')==='Not yet'){const t=new Date(Date.now()+2*864e5);d.value=new Date(t-t.getTimezoneOffset()*6e4).toISOString().slice(0,10);}};</script>
+</body></html>

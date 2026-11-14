@@ -1,0 +1,25 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Morning Cash Count · Varsa Manager Tools</title><link rel="stylesheet" href="styles.css">
+<style>:root{--a1:#22c55e;--a2:#14b8a6}</style></head><body><div class="wrap">
+<header class="hero"><div class="top"><a class="back" href="index.html">← Manager Home</a><span class="brand">Varsa Group LLC</span></div>
+<h1><span class="emo">💰</span>Morning Cash Count</h1><p>Pull the reports, count the safe and night drops, check every till close by 10:00 AM. Report any short right away.</p></header>
+<form data-form="morning_count" novalidate autocomplete="off">
+<section class="card"><h2><span class="dot"></span>Who &amp; where</h2>
+<div class="q">Store</div><div class="chips" id="storeBox" data-name="store" data-req></div>
+<label>Counted by</label><input type="text" name="cashier" required list="mgrs" placeholder="Varun, Sanchari, Jonathan…"><datalist id="mgrs"><option>Varun</option><option>Sanchari</option><option>Jonathan</option></datalist>
+</section>
+<section class="card"><h2><span class="dot"></span>What you counted</h2>
+<label>Night being counted</label><input type="date" name="count_date" data-today="yesterday" required><div class="q">Reports pulled?</div><div class="chips" data-name="reports_pulled" data-req data-options="Yes|No"></div><div class="q">Safe counted?</div><div class="chips" data-name="safe_counted" data-req data-options="Yes|No"></div><div class="q">Night drop found in the safe?</div><div class="chips" data-name="night_drop_found" data-req data-options="Yes|No"></div><div class="note bad" data-if="night_drop_found=No">🚨 No night drop found. Call Varun now.</div><div class="q">Every till close checked against its slip?</div><div class="chips" data-name="till_closes_checked" data-req data-options="Yes, all|Some missing"></div><div class="q">Do the bundles match their slips?</div><div class="chips" data-name="bundles_match" data-req data-options="Yes|No"></div>
+</section><section class="card"><h2><span class="dot"></span>Cash</h2>
+<div class="grid"><div><label>Total cash counted</label><input type="number" name="bundle_total" step="0.01" inputmode="decimal" placeholder="0.00" required></div><div><label>Report cash expected</label><input type="number" name="report_expected" step="0.01" inputmode="decimal" placeholder="0.00"></div></div><input type="hidden" name="difference"><div class="note ok hidden" id="m_ok"></div><div class="note bad hidden" id="m_bad"></div><div class="follow" data-if="difference!=0.00"><div class="q">Short reported to Varun?</div><div class="chips" data-name="short_reported" data-req data-options="Yes|No|Not short"></div></div><div class="q">Done by 10:00 AM?</div><div class="chips" data-name="done_by_10" data-req data-options="Yes|No"></div><label>Notes <small>(which till, which cashier, what happened)</small></label><textarea name="notes" placeholder=""></textarea>
+</section>
+<button class="btn" type="submit">Save Morning Count</button></form>
+<p class="foot">Varsa GROUP LLC · Manager Tools · answers go to the Varsa Cashier Tools sheet</p></div>
+<div class="toast" id="toast"></div>
+<script>window.RECENT_COLS=[["count_date", "Night"], ["bundle_total", "Counted"], ["report_expected", "Expected"], ["difference", "Diff"], ["bundles_match", "Match"]];</script>
+<script src="config.js"></script><script src="app.js"></script><script>const n=x=>parseFloat(val(x)),$i=id=>document.getElementById(id);
+window.onChange=()=>{const c=n('bundle_total'),e=n('report_expected'),D=document.querySelector('[name=difference]');D.value='';
+ if(!isNaN(c)&&!isNaN(e)){const d=Math.round((c-e)*100)/100;D.value=d.toFixed(2);$i('m_ok').classList.toggle('hidden',d!==0);$i('m_ok').textContent='✅ Cash matches the report.';
+  $i('m_bad').classList.toggle('hidden',d===0);$i('m_bad').innerHTML='❗ '+(d<0?'SHORT':'OVER')+' <span class="big">$'+Math.abs(d).toFixed(2)+'</span>'+(d<0?' — report it to Varun now.':'');}
+ else{$i('m_ok').classList.add('hidden');$i('m_bad').classList.add('hidden');}};</script>
+</body></html>

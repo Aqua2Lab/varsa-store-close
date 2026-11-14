@@ -1,0 +1,23 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Today's Plan · Varsa Manager Tools</title><link rel="stylesheet" href="styles.css">
+<style>:root{--a1:#f97316;--a2:#facc15}</style></head><body><div class="wrap">
+<header class="hero"><div class="top"><a class="back" href="index.html">← Manager Home</a><span class="brand">Varsa Group LLC</span></div>
+<h1><span class="emo">🗓️</span>Today's Plan</h1><p>ESM posts the plan in the group by 9:00 AM. 1–3 tasks per shift, night gets more.</p></header>
+<form data-form="todays_plan" novalidate autocomplete="off">
+<section class="card"><h2><span class="dot"></span>Who &amp; where</h2>
+<div class="q">Store</div><div class="chips" id="storeBox" data-name="store" data-req></div>
+<label>ESM name</label><input type="text" name="cashier" required list="mgrs" placeholder="Varun, Sanchari, Jonathan…"><datalist id="mgrs"><option>Varun</option><option>Sanchari</option><option>Jonathan</option></datalist>
+</section>
+<section class="card"><h2><span class="dot"></span>The plan</h2>
+<label>Plan date</label><input type="date" name="plan_date" data-today="today" required><label>Day shift tasks (1–3)</label><textarea name="day_tasks" placeholder="1. Face the chip aisle
+2. Clean the coffee station" required></textarea><label>Night shift tasks</label><textarea name="night_tasks" placeholder="1. Mop behind the counter
+2. Restock coolers" required></textarea><div class="grid"><div><label>Day backup</label><input type="text" name="day_backup" placeholder="ESM / Sanchari / Varun" required></div><div><label>Night backup</label><input type="text" name="night_backup" placeholder="ESM / Sanchari / Varun" required></div></div>
+</section><section class="card"><h2><span class="dot"></span>Posted?</h2>
+<div class="q">Posted in the WhatsApp group by 9:00 AM?</div><div class="chips" data-name="posted_by_9" data-req data-options="Yes|Yes, late|Not yet"></div><div class="note warn" data-if="posted_by_9=Not yet">Post the plan in the group now.</div><label>Notes <small>(optional)</small></label><textarea name="notes" placeholder=""></textarea>
+</section>
+<button class="btn" type="submit">Save Today's Plan</button></form>
+<p class="foot">Varsa GROUP LLC · Manager Tools · answers go to the Varsa Cashier Tools sheet</p></div>
+<div class="toast" id="toast"></div>
+<script>window.RECENT_COLS=[["plan_date", "Date"], ["day_tasks", "Day tasks"], ["night_tasks", "Night tasks"], ["posted_by_9", "By 9 AM"]];</script>
+<script src="config.js"></script><script src="app.js"></script>
+</body></html>

@@ -1,0 +1,23 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Night Shift Audit · Varsa Manager Tools</title><link rel="stylesheet" href="styles.css">
+<style>:root{--a1:#3b82f6;--a2:#8b5cf6}</style></head><body><div class="wrap">
+<header class="hero"><div class="top"><a class="back" href="index.html">← Manager Home</a><span class="brand">Varsa Group LLC</span></div>
+<h1><span class="emo">🎥</span>Night Shift Audit</h1><p>Camera audit of last night by 10:00 AM: expiry check, stock rotation, product facing.</p></header>
+<form data-form="night_audit" novalidate autocomplete="off">
+<section class="card"><h2><span class="dot"></span>Who &amp; where</h2>
+<div class="q">Store</div><div class="chips" id="storeBox" data-name="store" data-req></div>
+<label>Audited by</label><input type="text" name="cashier" required list="mgrs" placeholder="Varun, Sanchari, Jonathan…"><datalist id="mgrs"><option>Varun</option><option>Sanchari</option><option>Jonathan</option></datalist>
+</section>
+<section class="card"><h2><span class="dot"></span>Which night</h2>
+<label>Night audited</label><input type="date" name="night_date" data-today="yesterday" required><label>Night cashier</label><input type="text" name="night_cashier" placeholder="Name" required>
+</section><section class="card"><h2><span class="dot"></span>On camera</h2>
+<div class="q">Expiry dates checked, expired items pulled?</div><div class="chips" data-name="expiry_check" data-req data-options="Yes|Partly|No"></div><div class="q">Old stock rotated to the front?</div><div class="chips" data-name="rotation" data-req data-options="Yes|Partly|No"></div><div class="q">Products faced on every aisle?</div><div class="chips" data-name="facing" data-req data-options="Yes|Partly|No"></div><div class="q">Washroom deep clean done by 10:30 PM?</div><div class="chips" data-name="washroom_deep" data-req data-options="Yes|No"></div><div class="q">WhatsApp confirmation with photos by 10:30 PM?</div><div class="chips" data-name="whatsapp_1030" data-req data-options="Yes|Late|No"></div><div class="q">Busy on camera the whole shift?</div><div class="chips" data-name="busy_on_camera" data-req data-options="Yes|Mostly|No"></div>
+</section><section class="card"><h2><span class="dot"></span>Follow-up</h2>
+<label>What was missed? <small>(blank if nothing)</small></label><textarea name="misses" placeholder=""></textarea><div class="q">Followed up with the cashier?</div><div class="chips" data-name="follow_up" data-req data-options="Yes|Not yet|Nothing missed"></div><div class="q">Audit done by 10:00 AM?</div><div class="chips" data-name="done_by_10" data-req data-options="Yes|No"></div>
+</section>
+<button class="btn" type="submit">Save Night Audit</button></form>
+<p class="foot">Varsa GROUP LLC · Manager Tools · answers go to the Varsa Cashier Tools sheet</p></div>
+<div class="toast" id="toast"></div>
+<script>window.RECENT_COLS=[["night_date", "Night"], ["night_cashier", "Cashier"], ["expiry_check", "Expiry"], ["rotation", "Rotate"], ["facing", "Facing"], ["whatsapp_1030", "WhatsApp"]];</script>
+<script src="config.js"></script><script src="app.js"></script>
+</body></html>

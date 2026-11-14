@@ -1,0 +1,21 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Shelf &amp; Stock Audit · Varsa Manager Tools</title><link rel="stylesheet" href="styles.css">
+<style>:root{--a1:#8b5cf6;--a2:#ec4899}</style></head><body><div class="wrap">
+<header class="hero"><div class="top"><a class="back" href="index.html">← Manager Home</a><span class="brand">Varsa Group LLC</span></div>
+<h1><span class="emo">🧃</span>Shelf &amp; Stock Audit</h1><p>Weekly shelf survey: gaps, expired items, facing, and what to order.</p></header>
+<form data-form="shelf_audit" novalidate autocomplete="off">
+<section class="card"><h2><span class="dot"></span>Who &amp; where</h2>
+<div class="q">Store</div><div class="chips" id="storeBox" data-name="store" data-req></div>
+<label>Audited by</label><input type="text" name="cashier" required list="mgrs" placeholder="Varun, Sanchari, Jonathan…"><datalist id="mgrs"><option>Varun</option><option>Sanchari</option><option>Jonathan</option></datalist>
+</section>
+<section class="card"><h2><span class="dot"></span>Areas</h2>
+<div class="q">Areas checked</div><div class="chips" data-name="areas" data-req data-multi data-options="Coolers|Beer cave|Chips|Candy|Grocery|Tobacco|Vape/Novelty|Automotive|Coffee|All"></div>
+</section><section class="card"><h2><span class="dot"></span>Findings</h2>
+<div class="q">Gaps / empty spots?</div><div class="chips" data-name="gaps_found" data-req data-options="Yes|No"></div><div class="follow" data-if="gaps_found=Yes"><label>Which items?</label><textarea name="gap_items" placeholder="" required></textarea></div><div class="q">Expired items found?</div><div class="chips" data-name="expired_found" data-req data-options="Yes|No"></div><div class="follow" data-if="expired_found=Yes"><label>Which items + qty pulled</label><textarea name="expired_items" placeholder="" required></textarea></div><div class="q">Products faced?</div><div class="chips" data-name="facing_ok" data-req data-options="Yes|Partly|No"></div><label>Low stock items</label><textarea name="low_stock_items" placeholder=""></textarea><div class="q">Order needed?</div><div class="chips" data-name="order_needed" data-req data-options="Yes|No"></div><label>Notes</label><textarea name="notes" placeholder=""></textarea>
+</section>
+<button class="btn" type="submit">Save Shelf Audit</button></form>
+<p class="foot">Varsa GROUP LLC · Manager Tools · answers go to the Varsa Cashier Tools sheet</p></div>
+<div class="toast" id="toast"></div>
+<script>window.RECENT_COLS=[["areas", "Areas"], ["gaps_found", "Gaps"], ["expired_found", "Expired"], ["facing_ok", "Facing"], ["order_needed", "Order"], ["_status", "Status"]];</script>
+<script src="config.js"></script><script src="app.js"></script>
+</body></html>

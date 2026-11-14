@@ -1,0 +1,21 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Schedule &amp; Time Cards · Varsa Manager Tools</title><link rel="stylesheet" href="styles.css">
+<style>:root{--a1:#3b82f6;--a2:#14b8a6}</style></head><body><div class="wrap">
+<header class="hero"><div class="top"><a class="back" href="index.html">← Manager Home</a><span class="brand">Varsa Group LLC</span></div>
+<h1><span class="emo">⏱️</span>Schedule &amp; Time Cards</h1><p>Schedule posted by Thursday for next week, with a named backup for every shift. Time card fixes approved before payroll.</p></header>
+<form data-form="schedule" novalidate autocomplete="off">
+<section class="card"><h2><span class="dot"></span>Who &amp; where</h2>
+<div class="q">Store</div><div class="chips" id="storeBox" data-name="store" data-req></div>
+<label>Your name</label><input type="text" name="cashier" required list="mgrs" placeholder="Varun, Sanchari, Jonathan…"><datalist id="mgrs"><option>Varun</option><option>Sanchari</option><option>Jonathan</option></datalist>
+</section>
+<section class="card"><h2><span class="dot"></span>Schedule</h2>
+<label>Week starting (Monday)</label><input type="date" name="week_start" required><div class="q">Posted by Thursday?</div><div class="chips" data-name="posted_by_thu" data-req data-options="Yes|Late|Not yet"></div><div class="q">Named backup for every shift?</div><div class="chips" data-name="backup_every_shift" data-req data-options="Yes|No"></div><label>Open shifts / gaps</label><textarea name="gaps" placeholder=""></textarea>
+</section><section class="card"><h2><span class="dot"></span>Time cards</h2>
+<div class="q">Any time card corrections?</div><div class="chips" data-name="timecard_fixes" data-req data-options="Yes|No"></div><div class="follow" data-if="timecard_fixes=Yes"><label>Who, which day, what changed</label><textarea name="fix_details" placeholder="" required></textarea><div class="q">Approved before payroll?</div><div class="chips" data-name="approved_before_payroll" data-req data-options="Yes|Not yet"></div></div><label>Notes</label><textarea name="notes" placeholder=""></textarea>
+</section>
+<button class="btn" type="submit">Save Schedule Check</button></form>
+<p class="foot">Varsa GROUP LLC · Manager Tools · answers go to the Varsa Cashier Tools sheet</p></div>
+<div class="toast" id="toast"></div>
+<script>window.RECENT_COLS=[["week_start", "Week"], ["posted_by_thu", "By Thu"], ["backup_every_shift", "Backups"], ["timecard_fixes", "TC fixes"], ["approved_before_payroll", "Approved"]];</script>
+<script src="config.js"></script><script src="app.js"></script>
+</body></html>

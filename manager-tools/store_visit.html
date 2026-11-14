@@ -1,0 +1,21 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Store Visit Audit · Varsa Manager Tools</title><link rel="stylesheet" href="styles.css">
+<style>:root{--a1:#14b8a6;--a2:#22d3ee}</style></head><body><div class="wrap">
+<header class="hero"><div class="top"><a class="back" href="index.html">← Manager Home</a><span class="brand">Varsa Group LLC</span></div>
+<h1><span class="emo">🏪</span>Store Visit Audit</h1><p>Sanchari visits each store at least once a week and reports issues.</p></header>
+<form data-form="store_visit" novalidate autocomplete="off">
+<section class="card"><h2><span class="dot"></span>Who &amp; where</h2>
+<div class="q">Store</div><div class="chips" id="storeBox" data-name="store" data-req></div>
+<label>Visited by</label><input type="text" name="cashier" required list="mgrs" placeholder="Varun, Sanchari, Jonathan…"><datalist id="mgrs"><option>Varun</option><option>Sanchari</option><option>Jonathan</option></datalist>
+</section>
+<section class="card"><h2><span class="dot"></span>Visit</h2>
+<label>Visit date</label><input type="date" name="visit_date" data-today="today" required><div class="q">Outside &amp; pumps</div><div class="chips" data-name="outside_pumps" data-req data-options="Good|OK|Needs work"></div><div class="q">Inside clean (floors, counter, aisles)</div><div class="chips" data-name="inside_clean" data-req data-options="Good|OK|Needs work"></div><div class="q">Washroom</div><div class="chips" data-name="washroom" data-req data-options="Good|OK|Needs work"></div><div class="q">Coolers &amp; shelves stocked and faced</div><div class="chips" data-name="coolers_shelves" data-req data-options="Good|OK|Needs work"></div><div class="q">Counter area</div><div class="chips" data-name="counter" data-req data-options="Good|OK|Needs work"></div><div class="q">Staff busy and polite</div><div class="chips" data-name="staff_busy" data-req data-options="Yes|Mostly|No"></div>
+</section><section class="card"><h2><span class="dot"></span>Findings</h2>
+<label>Customer feedback <small>(ask 1–2 customers)</small></label><textarea name="customer_feedback" placeholder=""></textarea><label>Issues found</label><textarea name="issues" placeholder="What needs fixing"></textarea><div class="grid"><div><label>Follow-up owner</label><input type="text" name="follow_up_by" placeholder="Jonathan / Varun / Sanchari"></div><div><label>Due date</label><input type="date" name="due_date"></div></div>
+</section>
+<button class="btn" type="submit">Save Store Visit</button></form>
+<p class="foot">Varsa GROUP LLC · Manager Tools · answers go to the Varsa Cashier Tools sheet</p></div>
+<div class="toast" id="toast"></div>
+<script>window.RECENT_COLS=[["visit_date", "Date"], ["inside_clean", "Inside"], ["washroom", "Washroom"], ["staff_busy", "Staff"], ["issues", "Issues"], ["_status", "Status"]];</script>
+<script src="config.js"></script><script src="app.js"></script>
+</body></html>
