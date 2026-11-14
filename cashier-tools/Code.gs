@@ -371,8 +371,9 @@ function storeClose_(p) {
   const tz = ssc.getSpreadsheetTimeZone() || 'America/Chicago';
   const num = function (x) { if (typeof x === 'number') return x; const v = parseFloat(String(x).replace(/[$,\s]/g, '')); return isNaN(v) ? 0 : v; };
   const r2 = function (x) { return Math.round(x * 100) / 100; };
-  let rows = sh.getRange(2, 1, last - 1, 32).getValues().filter(function (r) { return r[0] !== '' && r[1] !== ''; }).map(function (r) {
-    const date = Object.prototype.toString.call(r[0]) === '[object Date]' ? Utilities.formatDate(r[0], tz, 'yyyy-MM-dd') : String(r[0]).slice(0, 10);
+  const disp = sh.getRange(2, 1, last - 1, 1).getDisplayValues();
+  let rows = sh.getRange(2, 1, last - 1, 32).getValues().map(function (r, i) { r.push(disp[i][0]); return r; }).filter(function (r) { return r[0] !== '' && r[1] !== ''; }).map(function (r) {
+    const dv = String(r[32] || ''), date = /^\d{4}-\d{2}-\d{2}/.test(dv) ? dv.slice(0, 10) : (Object.prototype.toString.call(r[0]) === '[object Date]' ? Utilities.formatDate(r[0], tz, 'yyyy-MM-dd') : String(r[0]).slice(0, 10));
     const gas = num(r[3]) - num(r[4]), tax = num(r[6]);
     let items = 0; for (let i = 7; i <= 20; i++) items += num(r[i]); // Beer..TBA (H..U)
     const inc = gas + tax + items;
