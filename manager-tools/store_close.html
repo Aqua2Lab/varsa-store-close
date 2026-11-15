@@ -23,8 +23,8 @@ function render(){
  const stores=st?[st]:STORES;
  $('stats').innerHTML=stores.map(s=>{const w=sum(ALL,d7,today,s),m=sum(ALL,mStart,today,s),f=sum(ALL,from,to,s);
   return '<div class="stat"><b>📍 '+esc(short(s))+' · last 7 days</b><div class="v">'+so(Math.round(w.so*100)/100)+'</div><small>'+w.n+' closes · sales '+money(w.sales)+' · '+w.shorts+' short</small></div>'+
-   '<div class="stat"><b>📍 '+esc(short(s))+' · month to date</b><div class="v">'+so(Math.round(m.so*100)/100)+'</div><small>'+m.n+' closes · sales '+money(m.sales)+' · '+m.shorts+' short · est. commission '+money(Math.round(m.fuel)/100)+'</small></div>'+
-   '<div class="stat"><b>📍 '+esc(short(s))+' · filtered range</b><div class="v">'+so(Math.round(f.so*100)/100)+'</div><small>'+f.n+' closes · sales '+money(f.sales)+' · merchandise '+money(f.sales-f.fuel)+' vs fuel (net) '+money(f.fuel)+' · est. fuel commission (3¢/gal @ $3/gal) '+money(Math.round(f.fuel)/100)+'</small></div>';}).join('');
+   '<div class="stat"><b>📍 '+esc(short(s))+' · month to date</b><div class="v">'+so(Math.round(m.so*100)/100)+'</div><small>'+m.n+' closes · sales '+money(m.sales)+' · '+m.shorts+' short · est. commission '+money(Math.round(m.fuel)/100)+' · <b>approx. profit '+money(Math.round(((m.sales-m.fuel)*0.28+m.fuel*0.01)*100)/100)+'</b></small></div>'+
+   '<div class="stat"><b>📍 '+esc(short(s))+' · filtered range</b><div class="v">'+so(Math.round(f.so*100)/100)+'</div><small>'+f.n+' closes · sales '+money(f.sales)+' · merchandise '+money(f.sales-f.fuel)+' vs fuel (net) '+money(f.fuel)+' · est. fuel commission (3¢/gal @ $3/gal) '+money(Math.round(f.fuel)/100)+'<br><b>Approx. profit '+money(Math.round(((f.sales-f.fuel)*0.28+f.fuel*0.01)*100)/100)+'</b> (28% of inside sales + fuel commission)</small></div>';}).join('');
  const rows=ALL.filter(x=>x.date>=from&&x.date<=to&&(!st||String(x.store).toLowerCase()===String(st).toLowerCase()));
  const seen={};ALL.forEach(x=>{const k=x.date+'|'+x.store;seen[k]=(seen[k]||0)+1;});
  $('cnt').textContent=rows.length+' entries';
