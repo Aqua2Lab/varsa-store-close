@@ -1,8 +1,8 @@
 <!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Store Close Report · Varsa Manager Tools</title><link rel="stylesheet" href="styles.css">
-<style>:root{--a1:#0b3d6e;--a2:#3b82f6}.wrap{max-width:1100px}.tblwrap{max-height:460px}</style></head><body><div class="wrap">
+<style>:root{--a1:#0b3d6e;--a2:#3b82f6}.wrap{max-width:1100px}.tblwrap{max-height:460px}.over{color:#ea580c!important}tr.r-over td{background:#ffedd5!important}.short{color:#dc2626!important}tr.r-short td{background:#fee2e2!important}</style></head><body><div class="wrap">
 <header class="hero"><div class="top"><a class="back" href="index.html">← Manager Home</a><span class="brand">Varsa Group LLC</span></div>
-<h1><span class="emo">🧾</span>Store Close Report</h1><p>Read only, from the Store Close Log. Short/Over = Total Outgoing − Total Incoming (minus = short).</p></header>
+<h1><span class="emo">🧾</span>Store Close Report</h1><p>Read only, from the Store Close Log. Short/Over = Total Outgoing − Total Incoming (red = short, orange = over). Expenses = FD130 + coupons + card/cash purchases + cash expenses (the close form now sends one Expenses total).</p></header>
 <section class="card"><div class="filters">
 <div><label>Store</label><select id="fStore"><option value="">Both stores</option></select></div>
 <div><label>From</label><input type="date" id="fFrom"></div><div><label>To</label><input type="date" id="fTo"></div>
@@ -17,22 +17,22 @@ const today=localISO(new Date()),mStart=today.slice(0,8)+'01',d7=localISO(new Da
 $('fFrom').value=mStart;$('fTo').value=today;
 const so=v=>v<0?'<span class="short">Short '+money(-v)+'</span>':v>0?'<span class="over">Over '+money(v)+'</span>':'<span>$0.00</span>';
 function sum(rows,from,to,store){const r=rows.filter(x=>x.date>=from&&x.date<=to&&(!store||x.store===store));
- return{n:r.length,so:r.reduce((a,x)=>a+x.short_over,0),sales:r.reduce((a,x)=>a+x.report_total,0),shorts:r.filter(x=>x.short_over<0).length};}
+ return{n:r.length,so:r.reduce((a,x)=>a+x.short_over,0),sales:r.reduce((a,x)=>a+x.report_total,0),fuel:r.reduce((a,x)=>a+x.fuel,0),shorts:r.filter(x=>x.short_over<0).length};}
 function render(){
  const st=$('fStore').value,from=$('fFrom').value||'0000',to=$('fTo').value||'9999';
  const stores=st?[st]:STORES;
  $('stats').innerHTML=stores.map(s=>{const w=sum(ALL,d7,today,s),m=sum(ALL,mStart,today,s),f=sum(ALL,from,to,s);
   return '<div class="stat"><b>📍 '+esc(short(s))+' · last 7 days</b><div class="v">'+so(Math.round(w.so*100)/100)+'</div><small>'+w.n+' closes · sales '+money(w.sales)+' · '+w.shorts+' short</small></div>'+
    '<div class="stat"><b>📍 '+esc(short(s))+' · month to date</b><div class="v">'+so(Math.round(m.so*100)/100)+'</div><small>'+m.n+' closes · sales '+money(m.sales)+' · '+m.shorts+' short</small></div>'+
-   '<div class="stat"><b>📍 '+esc(short(s))+' · filtered range</b><div class="v">'+so(Math.round(f.so*100)/100)+'</div><small>'+f.n+' closes · sales '+money(f.sales)+'</small></div>';}).join('');
+   '<div class="stat"><b>📍 '+esc(short(s))+' · filtered range</b><div class="v">'+so(Math.round(f.so*100)/100)+'</div><small>'+f.n+' closes · sales '+money(f.sales)+' · merchandise '+money(f.sales-f.fuel)+' vs fuel (net) '+money(f.fuel)+'</small></div>';}).join('');
  const rows=ALL.filter(x=>x.date>=from&&x.date<=to&&(!st||x.store===st));
  const seen={};ALL.forEach(x=>{const k=x.date+'|'+x.store;seen[k]=(seen[k]||0)+1;});
  $('cnt').textContent=rows.length+' entries';
  if(!rows.length){$('tbl').innerHTML='<span class="muted">No entries for this filter.</span>';return;}
- const H=[['Date'],['Store'],['Cashier'],['Report Total','num'],['Incoming','num'],['Outgoing','num'],['Card','num'],['Deposit','num'],['Cash Exp.','num'],['Diff vs Report','num'],['Short / Over','num']];
+ const H=[['Date'],['Store'],['Cashier'],['Report Total','num'],['Incoming','num'],['Outgoing','num'],['Card','num'],['Deposit','num'],['Expenses','num'],['Diff vs Report','num'],['Short / Over','num']];
  $('tbl').innerHTML='<div class="tblwrap"><table><thead><tr>'+H.map(h=>'<th class="'+(h[1]||'')+'">'+h[0]+'</th>').join('')+'</tr></thead><tbody>'+rows.map(r=>
   '<tr class="'+(r.short_over<0?'r-short':r.short_over>0?'r-over':'')+'"><td>'+esc(r.date)+(seen[r.date+'|'+r.store]>1?' <span class="badge warn" title="More than one close for this store and date">2x</span>':'')+'</td><td>'+esc(short(r.store))+'</td><td>'+esc(r.cashier)+'</td>'+
-  [r.report_total,r.incoming,r.outgoing,r.card,r.deposit,r.cash_expenses].map(v=>'<td class="num">'+money(v)+'</td>').join('')+
+  [r.report_total,r.incoming,r.outgoing,r.card,r.deposit,r.fd130+r.coupons+r.cash_purchases+r.cash_expenses].map(v=>'<td class="num">'+money(v)+'</td>').join('')+
   '<td class="num">'+(r.diff_report?'<span class="badge warn">'+money(r.diff_report)+'</span>':'$0.00')+'</td><td class="num">'+so(r.short_over)+'</td></tr>').join('')+'</tbody></table></div>';}
 function load(){$('tbl').innerHTML='<span class="muted">Loading…</span>';
  jsonp({action:'storeclose'}).then(res=>{ALL=res.rows||[];render();}).catch(e=>{$('tbl').innerHTML='<span class="muted">Could not load: '+esc(e.message)+'</span>';$('stats').innerHTML='';});}

@@ -293,6 +293,7 @@ function doPost(e) {
   try {
     lock.waitLock(20000);
     const data = JSON.parse((e && e.postData && e.postData.contents) || '{}');
+    if (data.form === 'expense') return json_(expense_(data));
     const spec = SCHEMA[data.form];
     if (!spec) return json_({ ok: false, error: 'Unknown form: ' + data.form });
     const sh = getTab_(spec);
@@ -337,6 +338,7 @@ function doGet(e) {
       CASHIER_FORMS.forEach(function (f) { tabs[f] = readRows_(SCHEMA[f], p.store, n); });
       return out_({ ok: true, tabs: tabs }, p.callback);
     }
+    if (p.form === 'expense') return out_({ ok: true, form: 'expense', rows: expenseRows_(p) }, p.callback);
     if (p.form) {
       const spec = SCHEMA[p.form];
       if (!spec) return out_({ ok: false, error: 'Unknown form' }, p.callback);
@@ -424,4 +426,50 @@ function testPost() {
 
 function json_(o) {
   return ContentService.createTextOutput(JSON.stringify(o)).setMimeType(ContentService.MimeType.JSON);
+}
+
+
+// ===== Expenses tab (Manager Tools) =====
+// NON-vendor cash expenses only (Walmart runs, cash given out...). Vendor invoices go through Delivery Intake.
+// Rows go to the "Expenses" tab of the Varsa Store Close Log; photos go to Drive:
+// Varsa Group LLC > 09 Accounting & Financials > Cash Expense Receipts.
+const EXP_HEADERS = ['Timestamp', 'Expense Date', 'Store', 'Entered By', 'Amount', 'Type', 'Paid To / Where', 'Reason / Bill Note', 'Receipt Photo', 'Manager Notes'];
+function expTab_() {
+  const ss = SpreadsheetApp.openById(STORE_CLOSE_ID);
+  let sh = ss.getSheetByName('Expenses');
+  if (!sh) { sh = ss.insertSheet('Expenses'); sh.getRange(1, 1, 1, EXP_HEADERS.length).setValues([EXP_HEADERS]).setFontWeight('bold'); sh.setFrozenRows(1); }
+  return sh;
+}
+function receiptFolder_() {
+  let parent = null;
+  const roots = DriveApp.getFoldersByName('09 Accounting & Financials');
+  while (roots.hasNext()) { const f = roots.next(), ps = f.getParents(); if (ps.hasNext() && /varsa/i.test(ps.next().getName())) { parent = f; break; } if (!parent) parent = f; }
+  if (!parent) parent = DriveApp.getRootFolder();
+  const it = parent.getFoldersByName('Cash Expense Receipts');
+  return it.hasNext() ? it.next() : parent.createFolder('Cash Expense Receipts');
+}
+function expense_(d) {
+  const clean = function (v) { v = String(v == null ? '' : v).trim(); return /^[=+\-@]/.test(v) && !/^-?\d/.test(v) ? "'" + v : v; };
+  const amt = Number(String(d.amount || '').replace(/[$,]/g, ''));
+  if (!(amt > 0)) return { ok: false, error: 'Amount must be more than 0' };
+  if (!String(d.reason || '').trim()) return { ok: false, error: 'Reason / bill note required' };
+  if (/vendor/i.test(String(d.type || ''))) return { ok: false, error: 'Vendor expenses are not logged here' };
+  let link = '';
+  if (d.photo && /^data:image\/(jpeg|png|webp);base64,/.test(d.photo)) {
+    const m = d.photo.match(/^data:(image\/\w+);base64,(.*)$/);
+    const name = [d.date, String(d.store || '').replace('Thomasville ', ''), amt.toFixed(2), String(d.paid_to || '').slice(0, 30)].join(' ').trim() + '.jpg';
+    const file = receiptFolder_().createFile(Utilities.newBlob(Utilities.base64Decode(m[2]), m[1], name));
+    link = file.getUrl();
+  }
+  const sh = expTab_();
+  sh.appendRow([new Date(), clean(d.date), clean(d.store), clean(d.cashier), amt, clean(d.type), clean(d.paid_to), clean(d.reason), link, '']);
+  return { ok: true, row: sh.getLastRow(), photo: link };
+}
+function expenseRows_(p) {
+  const sh = SpreadsheetApp.openById(STORE_CLOSE_ID).getSheetByName('Expenses');
+  if (!sh || sh.getLastRow() < 2) return [];
+  const last = sh.getLastRow(), start = Math.max(2, last - 199), keys = ['_ts', 'date', 'store', 'cashier', 'amount', 'type', 'paid_to', 'reason', 'photo', '_mnotes'];
+  let rows = sh.getRange(start, 1, last - start + 1, keys.length).getDisplayValues().map(function (r) { const o = {}; keys.forEach(function (k, i) { o[k] = r[i]; }); return o; });
+  if (p.store) rows = rows.filter(function (o) { return o.store === p.store; });
+  return rows.reverse().slice(0, Math.min(parseInt(p.limit, 10) || 50, 200));
 }

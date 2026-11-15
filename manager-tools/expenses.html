@@ -1,0 +1,32 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Expenses · Varsa Manager Tools</title><link rel="stylesheet" href="styles.css">
+<style>:root{--a1:#ea580c;--a2:#f43f5e}#prev{max-width:100%;max-height:220px;border-radius:12px;margin-top:8px;display:none}</style></head><body><div class="wrap">
+<header class="hero"><div class="top"><a class="back" href="index.html">← Manager Home</a><span class="brand">Varsa Group LLC</span></div>
+<h1><span class="emo">💵</span>Expenses</h1><p>Non-vendor cash expenses only: Walmart / store-supply runs, cash given out, small cash buys. Goes to the Expenses tab of the Store Close Log.</p></header>
+<div class="note warn" style="margin:0 0 12px">🚫 <b>No vendor expenses here.</b> Vendor invoices (Coke, Pepsi, Budweiser, Golden Flake, etc.) go in <a href="delivery_intake.html">Delivery Intake</a>.</div>
+<form data-form="expense" novalidate autocomplete="off">
+<section class="card"><h2><span class="dot"></span>Who &amp; where</h2>
+<div class="q">Store</div><div class="chips" id="storeBox" data-name="store" data-req></div>
+<label>Entered by</label><input type="text" name="cashier" required list="mgrs" placeholder="Varun, Sanchari, Jonathan…"><datalist id="mgrs"><option>Varun</option><option>Sanchari</option><option>Jonathan</option></datalist>
+</section>
+<section class="card"><h2><span class="dot"></span>Expense</h2>
+<label>Expense date</label><input type="date" name="date" data-today required>
+<label>Amount ($)</label><input type="text" name="amount" inputmode="decimal" placeholder="0.00  (12.50+3.99 adds up)" required>
+<div class="q">Type</div><div class="chips" data-name="type" data-req data-options="Walmart / store supplies|Cash given out|Repair / maintenance|Other non-vendor"></div>
+<label>Paid to / where</label><input type="text" name="paid_to" placeholder="Walmart, employee name, plumber…">
+<label>Reason / bill note</label><textarea name="reason" required placeholder="What was bought or why the cash went out"></textarea>
+<label>Receipt / bill photo <small>(optional, but snap it if you have one)</small></label>
+<input type="file" id="pic" accept="image/*" capture="environment"><input type="hidden" name="photo" id="photo"><img id="prev" alt="">
+</section>
+<button class="btn" type="submit">Save Expense</button></form>
+<p class="foot">Varsa GROUP LLC · Manager Tools · Store Close Log › Expenses · photos in Drive › 09 Accounting &amp; Financials › Cash Expense Receipts</p></div>
+<div class="toast" id="toast"></div>
+<script>window.RECENT_COLS=[["date","Date"],["amount","Amount"],["type","Type"],["paid_to","Paid To"],["reason","Reason"],["photo","Photo"]];
+function calcAmt(s){s=String(s||'').replace(/[$,\s]/g,'');if(!/^(\d+\.?\d*|\.\d+)(\+(\d+\.?\d*|\.\d+))*$/.test(s))return NaN;return Math.round(s.split('+').reduce((a,x)=>a+parseFloat(x),0)*100)/100;}
+window.beforeSubmit=function(d){const v=calcAmt(d.amount);if(!(v>0))return 'Enter the amount, e.g. 12.50';d.amount=v.toFixed(2);
+ if(/vendor/i.test(d.paid_to||'')&&!confirm('This page is for non-vendor expenses only. Save anyway?'))return 'Use Delivery Intake for vendor invoices';
+ setTimeout(()=>{document.getElementById('prev').style.display='none';document.getElementById('photo').value='';},100);};
+document.getElementById('pic').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;const img=new Image();img.onload=()=>{const k=Math.min(1,1280/Math.max(img.width,img.height)),c=document.createElement('canvas');c.width=Math.round(img.width*k);c.height=Math.round(img.height*k);c.getContext('2d').drawImage(img,0,0,c.width,c.height);const u=c.toDataURL('image/jpeg',.7);document.getElementById('photo').value=u;const p=document.getElementById('prev');p.src=u;p.style.display='block';URL.revokeObjectURL(img.src);};img.src=URL.createObjectURL(f);});
+</script>
+<script src="config.js"></script><script src="app.js"></script>
+</body></html>
