@@ -16,7 +16,7 @@ STORES.forEach(s=>$('fStore').insertAdjacentHTML('beforeend','<option>'+esc(s)+'
 const today=localISO(new Date()),mStart=today.slice(0,8)+'01',d7=localISO(new Date(Date.now()-6*864e5));
 $('fFrom').value=mStart;$('fTo').value=today;
 const so=v=>v<0?'<span class="short">Short '+money(-v)+'</span>':v>0?'<span class="over">Over '+money(v)+'</span>':'<span>$0.00</span>';
-function sum(rows,from,to,store){const r=rows.filter(x=>x.date>=from&&x.date<=to&&(!store||x.store===store));
+function sum(rows,from,to,store){const r=rows.filter(x=>x.date>=from&&x.date<=to&&(!store||String(x.store).toLowerCase()===String(store).toLowerCase()));
  return{n:r.length,so:r.reduce((a,x)=>a+x.short_over,0),sales:r.reduce((a,x)=>a+x.report_total,0),fuel:r.reduce((a,x)=>a+x.fuel,0),shorts:r.filter(x=>x.short_over<0).length};}
 function render(){
  const st=$('fStore').value,from=$('fFrom').value||'0000',to=$('fTo').value||'9999';
@@ -25,7 +25,7 @@ function render(){
   return '<div class="stat"><b>📍 '+esc(short(s))+' · last 7 days</b><div class="v">'+so(Math.round(w.so*100)/100)+'</div><small>'+w.n+' closes · sales '+money(w.sales)+' · '+w.shorts+' short</small></div>'+
    '<div class="stat"><b>📍 '+esc(short(s))+' · month to date</b><div class="v">'+so(Math.round(m.so*100)/100)+'</div><small>'+m.n+' closes · sales '+money(m.sales)+' · '+m.shorts+' short</small></div>'+
    '<div class="stat"><b>📍 '+esc(short(s))+' · filtered range</b><div class="v">'+so(Math.round(f.so*100)/100)+'</div><small>'+f.n+' closes · sales '+money(f.sales)+' · merchandise '+money(f.sales-f.fuel)+' vs fuel (net) '+money(f.fuel)+'</small></div>';}).join('');
- const rows=ALL.filter(x=>x.date>=from&&x.date<=to&&(!st||x.store===st));
+ const rows=ALL.filter(x=>x.date>=from&&x.date<=to&&(!st||String(x.store).toLowerCase()===String(st).toLowerCase()));
  const seen={};ALL.forEach(x=>{const k=x.date+'|'+x.store;seen[k]=(seen[k]||0)+1;});
  $('cnt').textContent=rows.length+' entries';
  if(!rows.length){$('tbl').innerHTML='<span class="muted">No entries for this filter.</span>';return;}
