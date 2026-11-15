@@ -1,98 +1,178 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Nightly Store Close</title>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Nightly Store Close · Varsa Group LLC</title>
 <style>
-body{font-family:system-ui,Arial,sans-serif;background:#f3f5f8;margin:0;padding:16px;color:#1f2933}
-.card{max-width:560px;margin:auto;background:#fff;border-radius:12px;padding:20px;box-shadow:0 2px 10px #0001}
-h1{font-size:1.3rem;margin:0 0 4px}p.sub{margin:0 0 12px;color:#667}h2{font-size:1rem;margin:22px 0 4px;color:#0b5cad;border-bottom:1px solid #dde;padding-bottom:4px}
-label{display:block;font-weight:600;margin:12px 0 4px}small{font-weight:400;color:#778}
-input,select{width:100%;box-sizing:border-box;padding:12px;font-size:1rem;border:1px solid #ccd;border-radius:8px}
+*{box-sizing:border-box}body{font-family:system-ui,Arial,sans-serif;background:#f3f5f8;margin:0;padding:10px;color:#1f2933}
+.card{max-width:640px;margin:auto;background:#fff;border-radius:14px;padding:16px;box-shadow:0 2px 10px #0001}
+h1{font-size:1.25rem;margin:0 0 2px}p.sub{margin:0 0 10px;color:#667;font-size:.9rem}
+h2{font-size:1rem;margin:20px 0 6px;color:#0b5cad;border-bottom:1px solid #dde;padding-bottom:4px}
+label{display:block;font-weight:700;margin:12px 0 4px;font-size:.95rem}small{font-weight:400;color:#778}
+.hint{font-size:.8rem;color:#56657a;margin:2px 0 0;line-height:1.3}
+.f{position:relative}
+input,select{width:100%;padding:14px 38px 14px 12px;font-size:1.1rem;border:1.5px solid #ccd;border-radius:10px;background:#fff}
+input:focus,select:focus{outline:none;border-color:#0b5cad;box-shadow:0 0 0 3px #0b5cad22}
+.f.ok input,.f.ok select{border-color:#16a34a;background:#f3fbf5}
+.f.ok::after{content:"✓";position:absolute;right:12px;top:50%;transform:translateY(-50%);color:#16a34a;font-weight:900;font-size:1.2rem;pointer-events:none}
+.f.bad input{border-color:#dc2626;background:#fef2f2}
+.calc{font-size:.8rem;color:#0b5cad;font-weight:700;min-height:1em;margin-top:2px}
+.err{color:#c0392b;font-size:.82rem;min-height:1em}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:0 10px}
-.err{color:#c0392b;font-size:.85rem;min-height:1em}
-button{width:100%;margin-top:14px;padding:14px;font-size:1.05rem;border:0;border-radius:8px;background:#0b5cad;color:#fff;font-weight:700}
-button.sec{background:#e8eef6;color:#0b5cad}
-#done{display:none;margin-top:14px;padding:10px;background:#e6f6ec;border-radius:8px}
+.depts{display:grid;grid-template-columns:repeat(3,1fr);gap:0 8px}
+.depts label{font-size:.85rem;margin:8px 0 3px}.depts input{padding:12px 26px 12px 8px;font-size:1rem}
+.depts .f.ok::after{right:7px;font-size:1rem}
+.groc{display:grid;grid-template-columns:2fr 1fr;gap:0 8px}
+.guide{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 12px}
+.guide>div{background:#f5f8fc;border:1px solid #dde;border-radius:10px;padding:8px 10px;font-size:.82rem;line-height:1.35}
+.guide h3{margin:0 0 4px;font-size:.9rem;color:#0b5cad}.guide ol{margin:0;padding-left:16px}.guide li{margin:2px 0}
+.guide .cur{border-color:#0b5cad;box-shadow:0 0 0 2px #0b5cad33}
+details.g{background:#fff8e6;border:1px solid #f3d58a;border-radius:10px;padding:8px 10px;margin:0 0 10px;font-size:.88rem}
+details.g summary{font-weight:700;cursor:pointer}
+.box{margin-top:14px;padding:10px 12px;border-radius:10px;font-size:.9rem;border:1px solid #dde;background:#f8fafc}
+.so{font-size:1.3rem;font-weight:900}.so.over{color:#ea580c}.so.short{color:#dc2626}.so.even{color:#16a34a}
+#soBox.over{background:#fff7ed;border-color:#fdba74}#soBox.short{background:#fef2f2;border-color:#fca5a5}
+table.sum{width:100%;border-collapse:collapse;font-size:.88rem}table.sum td{padding:3px 2px;border-bottom:1px dashed #e2e8f0}table.sum td:last-child{text-align:right;font-variant-numeric:tabular-nums}
+table.sum tr.t td{font-weight:800;border-bottom:1px solid #94a3b8}
+button{width:100%;margin-top:14px;padding:16px;font-size:1.1rem;border:0;border-radius:10px;background:#0b5cad;color:#fff;font-weight:800}
+button:disabled{opacity:.6}
+#done{display:none;margin-top:12px;padding:10px;background:#e6f6ec;border-radius:8px}
+@media (max-width:420px){.guide{grid-template-columns:1fr}.depts{grid-template-columns:repeat(3,1fr)}}
 </style></head><body><div class="card">
-<h1>Nightly Store Close</h1><p class="sub">Varsa GROUP LLC – fill from the Ruby2 Store Close report</p>
-<details open style="background:#f5f8fc;border:1px solid #dde;border-radius:8px;padding:10px 12px;margin:0 0 12px;font-size:.92rem;line-height:1.4">
-<summary style="font-weight:700;color:#0b5cad;cursor:pointer">How to read the report (Store #299 Chevron)</summary>
-<ol style="margin:8px 0 0;padding-left:18px">
-<li><b>Fuel:</b> copy <b>Total Fuel Sales</b> and <b>Fuel Discounts</b> from the fuel section. Enter the discount as a positive number.</li>
-<li><b>Departments</b> (Beer, Cigarettes, Novelty, Oil, Tobacco, Vape): in the department sales section, find each name and copy its <b>Net Sales</b> number.</li>
-<li><b>Grocery group</b> (Ice, TBA, Candy, Chips, Deli, Dept 1, Drinks, Grocery): same section, same <b>Net Sales</b> column. Any department not listed on this form goes in <b>Grocery</b>. Use the calculator to add them.</li>
-<li><b>Sales Tax:</b> copy <b>Total Taxes Collected</b>.</li>
-<li><b>Total Sales:</b> copy the total sales figure printed on the report.</li>
-<li><b>Credit/Debit:</b> copy <b>Network Revenue</b>, which is the Ruby C/C total.</li>
-<li><b>Outgoing:</b> these aren't on the report. Enter the bank deposit (cash minus the $300 drawer float), plus any FD130, coupons, cash purchases, and cash expenses.</li>
-</ol>
-<p style="margin:6px 0 0;color:#667">Leave a field at 0 or blank if it isn't on the report.</p>
-</details>
-<form id="f" novalidate>
-<label>Store name</label><select id="store" required><option value="">Select store</option><option>Thomasville Chevron</option><option>Thomasville Outrun</option></select><div class="err"></div>
-<div class="grid"><div><label>Date</label><input type="date" id="date" required><div class="err"></div></div>
-<div><label>Cashier</label><input id="cashier" required><div class="err"></div></div></div>
+<h1>Nightly Store Close</h1><p class="sub">Varsa Group LLC · fill from the Ruby2 Store Close report · goes to the Store Close Log</p>
 
-<h2>Fuel</h2>
-<label>Total Fuel Sales</label><input type="number" step="0.01" min="0" id="fuel" required><div class="err"></div>
-<label>Fuel Discounts <small>(enter as positive, e.g. 13.83)</small></label><input type="number" step="0.01" min="0" id="disc" required><div class="err"></div>
+<details class="g"><summary>Logging steps (read once)</summary><ol style="margin:6px 0 0;padding-left:18px">
+<li>Print the Store Close report (Chevron prints 3 pages; Outrun prints a long receipt).</li>
+<li><b>Fold the receipt in half twice</b> so page 1's bottom lines (fuel sales, fuel discount, sales tax) sit next to the top.</li>
+<li>Pick your store below. The help under each box changes to your store's report.</li>
+<li>Fill the boxes top to bottom. A green ✓ means the box is filled. Press Enter / Next to jump to the next box.</li>
+<li>Count the cash. Leave $300 in the till; the rest is the bank deposit.</li>
+<li>Press Submit, then write "Logged" on the report and keep it with the deposit.</li></ol></details>
 
-<h2>Departments <small>(Net Sales column)</small></h2>
-<div class="grid" id="own"></div>
-<h2>Grocery group</h2>
-<div class="grid" id="groc"></div>
+<div class="guide" id="guide">
+<div data-store="Thomasville Chevron"><h3>Thomasville Chevron · how to read the report</h3>
+<p style="margin:0 0 4px"><b>Store #299 report</b> (3 pages)</p><ol>
+<li><b>Total sales:</b> Grand Total store sales reading, first line, page 1 of 3.</li>
+<li><b>Fuel sales:</b> under Grand Total, the dollar value on the right side.</li>
+<li><b>Fuel discount:</b> line just below fuel sales.</li>
+<li><b>Sales tax:</b> Total Taxes Collected, just below fuel sales.</li>
+<li><b>Credit/Debit:</b> Network Revenue, page 2 of 3. Credit + debit are already combined; no adding.</li>
+<li><b>Departments:</b> Net Sales column for each department.</li></ol>
+</div>
+<div data-store="Thomasville Outrun"><h3>Thomasville Outrun · how to read the report</h3>
+<p style="margin:0 0 4px"><b>Store #167 report</b> (long receipt, fold in half twice)</p><ol>
+<li><b>Total sales:</b> Net Sales Total under the All Registers summary, page 1.</li>
+<li><b>Fuel sales:</b> bottom of page 1 (after folding twice).</li>
+<li><b>Fuel discount:</b> the line just above fuel sales.</li>
+<li><b>Sales tax:</b> bottom of page 1.</li>
+<li><b>Credit/Debit:</b> under All Registers, add the separate Credit line and Debit line (type it as 500.25+300.10).</li>
+<li><b>Departments:</b> Net Sales for each department.</li></ol></div>
+</div>
 
-<h2>Totals</h2>
-<label>Sales Tax <small>(Total Taxes Collected)</small></label><input type="number" step="0.01" min="0" id="tax" required><div class="err"></div>
-<label>Total Sales <small>(from report)</small></label><input type="number" step="0.01" min="0" id="total" required><div class="err"></div>
-<label>Credit/Debit Card Sales <small>(Network Revenue = Ruby C/C)</small></label><input type="number" step="0.01" min="0" id="card" required><div class="err"></div>
-<h2>Outgoing</h2>
-<label>Bank Deposit <small>(cash counted minus the $300 left in the drawer)</small></label><input type="number" step="0.01" min="0" id="dep" required><div class="err"></div>
-<div class="grid"><div><label>FD130</label><input type="number" step="0.01" min="0" id="fd130"><div class="err"></div></div>
-<div><label>Coupons</label><input type="number" step="0.01" min="0" id="coup"><div class="err"></div></div>
-<div><label>Cash Purchases</label><input type="number" step="0.01" min="0" id="cpur"><div class="err"></div></div>
-<div><label>Cash Expenses</label><input type="number" step="0.01" min="0" id="cexp"><div class="err"></div></div></div>
-<div id="so" style="margin-top:18px;padding:10px 12px;border:1px solid #f1b0a8;background:#fdecea;border-radius:8px;color:#b03a2e;font-size:.9rem">
-<div style="font-weight:700">Short/Over (live preview, not submitted)</div>
-<div id="soAmt" style="font-size:1.15rem;font-weight:800;margin:2px 0">$0.00</div>
-<div id="soDet" style="color:#8a3a30"></div></div>
-<button type="submit">Submit</button></form>
+<form id="f" novalidate autocomplete="off">
+<label>Store</label><div class="f"><select id="store" required><option value="">Select store</option><option>Thomasville Chevron</option><option>Thomasville Outrun</option></select></div><div class="err"></div>
+<div class="grid"><div><label>Date</label><div class="f"><input type="date" id="date" required></div><div class="err"></div></div>
+<div><label>Cashier</label><div class="f"><input id="cashier" required autocomplete="name"></div><div class="err"></div></div></div>
+
+<h2>1 · Sales from the report</h2>
+<div id="mainFields"></div>
+
+<h2>2 · Departments <small>(Net Sales)</small></h2>
+<div class="depts" id="own"></div>
+<label>Grocery <small>(everything else, added up; type 23+45+60)</small></label>
+<div class="groc"><div><div class="f"><input id="groc" class="num" inputmode="decimal" placeholder="23+45+60"></div><div class="calc" id="groc_c"></div></div>
+<div><div class="f"><input id="groc2" class="num" inputmode="decimal" placeholder="Extra (optional)"></div><div class="calc" id="groc2_c"></div></div></div>
+<div class="hint">Candy, chips, deli, drinks, ice, TBA, Dept 1, grocery, and any department not listed above all go in Grocery. The optional right box is added to it.</div>
+
+<h2>3 · Cash &amp; deposit</h2>
+<div class="grid"><div><label>Cash counted</label><div class="f"><input id="cash" class="num" inputmode="decimal" placeholder="0.00"></div><div class="calc" id="cash_c"></div></div>
+<div><label>Bank deposit <small>(cash − $300)</small></label><div class="f"><input id="dep" class="num" inputmode="decimal" placeholder="auto" required></div><div class="calc" id="dep_c"></div><div class="err"></div></div></div>
+<label>Expenses <small>(FD130 + coupons + card/cash purchases + cash expenses, one total)</small></label>
+<div class="f"><input id="exp" class="num" inputmode="decimal" placeholder="e.g. 12.50+40"></div><div class="calc" id="exp_c"></div>
+
+<div class="box" id="soBox"><div style="font-weight:700">Short / Over <small>(Outgoing − Incoming, same as the sheet)</small></div>
+<div class="so even" id="soAmt">$0.00</div><div class="hint" id="soDet"></div></div>
+
+<div class="box"><div style="font-weight:700;margin-bottom:4px">Summary</div><table class="sum" id="sum"></table></div>
+
+<button type="submit" id="go">Submit</button></form>
 <div id="done"></div><p class="sub" id="cnt"></p></div>
 <script>
-const OWN=['Beer','Cigarettes','Novelty','Oil','Tobacco','Vape'],GROC=['Ice','TBA','Candy','Chips','Deli','Dept 1','Drinks','Grocery'];
-const key=n=>'d_'+n.replace(/\W/g,'');
-function mk(list,box){list.forEach(n=>{box.insertAdjacentHTML('beforeend',`<div><label>${n}</label><input type="number" step="0.01" id="${key(n)}" class="dep"><div class="err"></div></div>`)})}
-mk(OWN,document.getElementById('own'));mk(GROC,document.getElementById('groc'));
-(function(){const gi=document.getElementById(key('Grocery')),cell=gi.parentElement;
- cell.querySelector('label').innerHTML='Grocery <small>(anything not in any other category goes here)</small>';
- cell.style.gridColumn='1 / -1';
- cell.insertAdjacentHTML('beforeend','<p class="sub" style="margin:6px 0 4px">Use the below calculator to calculate groceries. Just put in amounts like 2.50+3.99.</p><div style="display:flex;gap:8px"><input id="gAdd" placeholder="2.50+3.99+1.25" inputmode="decimal" style="flex:1"><button type="button" id="gCalc" style="width:auto;margin:0;padding:0 18px">Calculate</button></div><div id="gRes" style="margin-top:6px;font-weight:700"></div>');
- document.getElementById('gCalc').addEventListener('click',()=>{const parts=document.getElementById('gAdd').value.split('+').map(x=>x.trim()).filter(x=>x!=='');
-  const bad=parts.filter(x=>isNaN(parseFloat(x))||!/^-?\$?\d*\.?\d+$/.test(x));const out=document.getElementById('gRes');
-  if(!parts.length){out.style.color='#b03a2e';out.textContent='Enter amounts first.';return}
-  if(bad.length){out.style.color='#b03a2e';out.textContent='Check these entries: '+bad.join(', ');return}
-  const t=parts.reduce((s,x)=>s+parseFloat(x.replace('$','')),0);gi.value=(Math.round(t*100)/100).toFixed(2);gi.dispatchEvent(new Event('input',{bubbles:true}));out.textContent='';});
-})();
-const $=id=>document.getElementById(id),v=id=>parseFloat($(id).value)||0,m=n=>(Math.round(n*100)/100).toFixed(2);
-$('date').valueAsDate=new Date();
+// ---- safe math parser: numbers with + - * / and parentheses only (no eval) ----
+function calc(s){
+  s=String(s||'').replace(/[$,\s]/g,'');if(s==='')return {v:0,empty:true};
+  if(!/^[0-9.+\-*/()]+$/.test(s))return {err:'Numbers and + - only'};
+  let i=0;const peek=()=>s[i];
+  function num(){const m=/^(\d+\.?\d*|\.\d+)/.exec(s.slice(i));if(!m)throw 0;i+=m[0].length;return parseFloat(m[0]);}
+  function fac(){if(peek()==='-'){i++;return -fac();}if(peek()==='+'){i++;return fac();}if(peek()==='('){i++;const v=exp();if(peek()!==')')throw 0;i++;return v;}return num();}
+  function term(){let v=fac();while(peek()==='*'||peek()==='/'){const o=s[i++],r=fac();v=o==='*'?v*r:v/r;}return v;}
+  function exp(){let v=term();while(peek()==='+'||peek()==='-'){const o=s[i++];if(i>=s.length)return v;const r=term();v=o==='+'?v+r:v-r;}return v;}
+  try{const v=exp();if(i<s.length||!isFinite(v))throw 0;return {v:Math.round(v*100)/100,expr:/[+\-*/(]/.test(s.replace(/^-/,''))};}catch(e){return {err:'Check this entry'}}
+}
+const STORE_HINT={
+ total:['Grand Total store sales, 1st line, page 1 of 3','Net Sales Total, All Registers summary, page 1'],
+ fuel:['Under Grand Total, right-side dollar value','Bottom of page 1 (after folding twice)'],
+ disc:['Just below fuel sales (enter as positive)','Line just above fuel sales (enter as positive)'],
+ tax:['Total Taxes Collected, just below fuel sales','Bottom of page 1'],
+ card:['Network Revenue, page 2 of 3 (already combined, no adding)','All Registers: Credit + Debit (type 500+300)']};
+const MAIN=[['total','Total sales'],['fuel','Total fuel sales'],['disc','Fuel discount'],['tax','Sales tax'],['card','Credit / Debit']];
+const OWN=['Beer','Cigarettes','Novelty','Oil','Tobacco','Vape'];
+const $=id=>document.getElementById(id);
+MAIN.forEach(([id,l])=>$('mainFields').insertAdjacentHTML('beforeend',`<label>${l}</label><div class="f"><input id="${id}" class="num" inputmode="decimal" placeholder="0.00" required></div><div class="hint" id="${id}_h"></div><div class="calc" id="${id}_c"></div><div class="err"></div>`));
+const dk=n=>'d_'+n.toLowerCase();
+OWN.forEach(n=>$('own').insertAdjacentHTML('beforeend',`<div><label>${n}</label><div class="f"><input id="${dk(n)}" class="num" inputmode="decimal" placeholder="0"></div><div class="calc" id="${dk(n)}_c"></div></div>`));
+const val=id=>{const r=calc($(id).value);return r.err?0:r.v},m=n=>(Math.round(n*100)/100).toFixed(2),$m=n=>(n<0?'-$':'$')+Math.abs(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+const d=new Date();$('date').value=new Date(d-d.getTimezoneOffset()*6e4).toISOString().slice(0,10);
+$('cashier').value=localStorage.getItem('sc_cashier')||'';$('store').value=localStorage.getItem('sc_store')||'';
+let depAuto=true;
+function hints(){const k=$('store').value==='Thomasville Outrun'?1:$('store').value==='Thomasville Chevron'?0:-1;
+ MAIN.forEach(([id])=>$(id+'_h').textContent=k<0?'Pick a store to see where this is on the report':STORE_HINT[id][k]);
+ document.querySelectorAll('#guide>div').forEach(g=>g.classList.toggle('cur',g.dataset.store===$('store').value));}
+function mark(el){const w=el.closest('.f');if(!w)return;let ok=el.value.trim()!=='',bad=false;
+ if(el.classList.contains('num')&&ok){const r=calc(el.value);bad=!!r.err;ok=!bad;const c=$(el.id+'_c');if(c)c.textContent=r.err?r.err:(r.expr?'= '+$m(r.v):'');}
+ else{const c=$(el.id+'_c');if(c)c.textContent='';}
+ w.classList.toggle('ok',ok);w.classList.toggle('bad',bad);}
+function update(){
+ if(depAuto){const c=$('cash').value.trim();$('dep').value=c===''?'':m(Math.max(0,val('cash')-300));}
+ document.querySelectorAll('#f input,#f select').forEach(mark);
+ const gas=val('fuel')-val('disc'),tax=val('tax'),depts=OWN.reduce((a,n)=>a+val(dk(n)),0),groc=val('groc')+val('groc2'),items=depts+groc;
+ const inc=gas+tax+items,out=val('card')+val('dep')+val('exp'),so=Math.round((out-inc)*100)/100;
+ const cls=so>0?'over':so<0?'short':'even';$('soAmt').className='so '+cls;$('soBox').className='box '+(so>0?'over':so<0?'short':'');
+ $('soAmt').textContent=(so<0?'Short ':so>0?'Over ':'')+$m(Math.abs(so));
+ $('soDet').textContent='Outgoing '+$m(out)+' (card + deposit + expenses) − Incoming '+$m(inc)+' (gas '+$m(gas)+' + tax '+$m(tax)+' + store items '+$m(items)+')';
+ const ts=val('total'),fuel=val('fuel'),merch=ts-fuel,card=val('card'),dep=val('dep'),ex=val('exp');
+ const vi=ts+card+groc,vo=dep+ex+card;
+ const H=[['Total sales',ts,1],['Merchandise (total sales − fuel)',merch],['Fuel sales',fuel],['Merchandise vs fuel',ts?(merch/ts*100).toFixed(0)+'% / '+(fuel/ts*100).toFixed(0)+'%':'–','pct'],
+  ['Incoming: total sales',ts],['Incoming: credit/debit',card],['Incoming: grocery',groc],['Incoming total',vi,1],
+  ['Outgoing: bank deposit',dep],['Outgoing: expenses',ex],['Outgoing: credit/debit',card],['Outgoing total',vo,1]]
+  .map(r=>`<tr class="${r[2]===1?'t':''}"><td>${r[0]}</td><td>${r[2]==='pct'?r[1]:$m(r[1])}</td></tr>`).join('');if(H!==update.last){$('sum').innerHTML=H;update.last=H;}}
+$('dep').addEventListener('input',()=>{depAuto=$('dep').value.trim()==='';});
+$('store').addEventListener('change',hints);
+document.querySelectorAll('#f input,#f select').forEach(i=>{i.addEventListener('input',()=>{const er=errOf(i);if(er)er.textContent='';update();});if(i.tagName==='SELECT'||i.type==='date')i.addEventListener('change',update);});
+// Enter = jump to next field
+const order=()=>[...document.querySelectorAll('#f input,#f select')].filter(x=>!x.disabled);
+document.querySelectorAll('#f input').forEach(i=>{i.setAttribute('enterkeyhint','next');i.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();const o=order(),n=o[o.indexOf(i)+1];if(n)n.focus();else $('go').focus();}});});
+$('exp').setAttribute('enterkeyhint','done');
+hints();update();
 const WEBAPP_URL='https://script.google.com/macros/s/AKfycbx5ZSpU9HmyvhfSYle0_KzkfeXcTETkwNpP2JzNaXJU4pLSQqXeIFD-jDN1DOo7R9TX/exec';
 const log=()=>JSON.parse(localStorage.getItem('closeLog')||'[]');
 function count(){$('cnt').textContent=log().length+' submission(s) sent from this device.'}count();
-document.querySelectorAll('input,select').forEach(i=>i.addEventListener('input',()=>{const e=i.nextElementSibling;if(e&&e.classList.contains('err'))e.textContent=''}));
-function so(){const store=[...OWN,...GROC].reduce((a,n)=>a+v(key(n)),0),gas=v('fuel')-v('disc');
- const inc=gas+v('tax')+store,out=v('card')+v('dep')+v('fd130')+v('coup')+v('cpur')+v('cexp'),d=Math.round((out-inc)*100)/100;
- $('soAmt').textContent=(d<0?'Short ':d>0?'Over ':'')+'$'+Math.abs(d).toFixed(2);
- $('soDet').textContent='Outgoing $'+m(out)+' minus Incoming $'+m(inc)+' (gas $'+m(gas)+' + tax $'+m(v('tax'))+' + store items $'+m(store)+')';}
-document.querySelectorAll('input').forEach(i=>i.addEventListener('input',so));so();
-$('f').addEventListener('submit',e=>{e.preventDefault();let ok=true;
- document.querySelectorAll('[required]').forEach(i=>{const er=i.nextElementSibling;if(!i.value.trim()){er.textContent='Required';ok=false}else if(i.type=='number'&&v(i.id)<0){er.textContent='Must be 0 or more';ok=false}});
- if(v('disc')>v('fuel')){$('disc').nextElementSibling.textContent='Discount cannot exceed fuel sales';ok=false}
- if(!ok){window.scrollTo(0,0);return}
-const r={date:$('date').value,store_name:$('store').value,fuel_sales:m(v('fuel')),fuel_discounts:m(v('disc')),sales_tax:m(v('tax')),total_sales:m(v('total')),card_sales:m(v('card')),bank_deposit:m(v('dep')),fd130:m(v('fd130')),coupons:m(v('coup')),cash_purchases:m(v('cpur')),cash_expenses:m(v('cexp')),cashier:$('cashier').value,grocery_total:m(GROC.reduce((a,n)=>a+v(key(n)),0))};
- [...OWN,...GROC].forEach(n=>r[n.toLowerCase().replace(/\W+/g,'_')]=m(v(key(n))));
- const btn=document.querySelector('button[type=submit]');btn.disabled=true;btn.textContent='Sending...';
+function errOf(el){let n=(el.closest('.f')||el).nextElementSibling;while(n&&!n.classList.contains('err'))n=n.nextElementSibling;return n;}
+$('f').addEventListener('submit',e=>{e.preventDefault();let ok=true,first=null;document.querySelectorAll('.err').forEach(x=>x.textContent='');
+ const flag=(el,msg)=>{ok=false;first=first||el;const er=errOf(el);if(er)er.textContent=msg;};
+ document.querySelectorAll('[required]').forEach(i=>{if(!i.value.trim())flag(i,'Required');});
+ document.querySelectorAll('.num').forEach(i=>{const r=calc(i.value);if(r.err)flag(i,r.err);else if(r.v<0)flag(i,'Must be 0 or more');});
+ if(val('disc')>val('fuel'))flag($('disc'),'Discount cannot be more than fuel sales');
+ if(!ok){first.scrollIntoView({behavior:'smooth',block:'center'});first.focus();return}
+ // Sheet mapping: Expenses total -> FD130 column (AC); Coupons/Cash Purchases/Cash Expenses sent as 0.
+ // Grocery (+ optional extra box) -> Grocery column (S); other grocery-group columns sent as 0.
+ const r={date:$('date').value,store_name:$('store').value,cashier:$('cashier').value.trim(),total_sales:m(val('total')),fuel_sales:m(val('fuel')),fuel_discounts:m(val('disc')),sales_tax:m(val('tax')),card_sales:m(val('card')),
+  bank_deposit:m(val('dep')),fd130:m(val('exp')),coupons:'0.00',cash_purchases:'0.00',cash_expenses:'0.00',
+  candy:'0.00',chips:'0.00',deli:'0.00',dept_1:'0.00',drinks:'0.00',ice:'0.00',tba:'0.00',grocery:m(val('groc')+val('groc2')),grocery_total:m(val('groc')+val('groc2'))};
+ OWN.forEach(n=>r[n.toLowerCase()]=m(val(dk(n))));
+ localStorage.setItem('sc_cashier',r.cashier);localStorage.setItem('sc_store',r.store_name);
+ const btn=$('go');btn.disabled=true;btn.textContent='Sending...';
  fetch(WEBAPP_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify(r)})
- .then(()=>{$('done').style.display='block';$('done').style.background='#e6f6ec';$('done').textContent='Submitted to the Store Close Log sheet. Thank you!';
+ .then(()=>{$('done').style.display='block';$('done').style.background='#e6f6ec';$('done').textContent='✅ Submitted to the Store Close Log. Thank you!';
   const all=log();all.push(r);localStorage.setItem('closeLog',JSON.stringify(all));count();
-  document.querySelectorAll('.dep,#fuel,#disc,#tax,#total,#card,#dep,#fd130,#coup,#cpur,#cexp,#gAdd').forEach(i=>i.value='');document.getElementById('gRes').textContent='';so();})
+  document.querySelectorAll('.num').forEach(i=>i.value='');depAuto=true;update();window.scrollTo(0,0);})
  .catch(()=>{$('done').style.display='block';$('done').style.background='#fdecea';$('done').textContent='Could not send - check internet and submit again.';})
  .finally(()=>{btn.disabled=false;btn.textContent='Submit';});});
 </script></body></html>
