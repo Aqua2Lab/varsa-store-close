@@ -1,0 +1,50 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Invoice Upload · Varsa Manager Tools</title><link rel="stylesheet" href="styles.css"><link rel="stylesheet" href="docs.css">
+<style>:root{--a1:#0f766e;--a2:#3b82f6}</style></head><body><div class="wrap">
+<header class="hero"><div class="top"><a class="back" href="index.html">← Manager Home</a><span class="brand">Varsa Group LLC</span></div>
+<h1><span class="emo">📑</span>Invoice Upload</h1><p>Scan or upload a vendor invoice. The file goes to Drive › Varsa Group LLC › Invoices and the details go to the Invoices tab of the log.</p></header>
+<form id="docForm" novalidate autocomplete="off">
+<section class="card"><h2><span class="dot"></span>Invoice file</h2>
+<div class="filebtns"><label class="fbtn"><span class="big">📷</span>Scan with camera<small>one photo per page</small><input type="file" accept="image/*" capture="environment" data-file></label>
+<label class="fbtn"><span class="big">📁</span>Upload PDF / image<small>from phone or computer</small><input type="file" accept="application/pdf,image/*" multiple data-file></label></div>
+<div id="fileList"></div><div class="err" id="fileErr"></div></section>
+<section class="card"><h2><span class="dot"></span>Who &amp; where</h2>
+<label>Store *</label><select name="store" data-stores data-extra="Office / Both" required></select>
+<label>Category *</label><select name="category" required><option value="">Choose category…</option><option value="Store Purchase">Store Purchase (merchandise or supplies for the store)</option><option value="Vendor / Order Invoice">Vendor / Order Invoice (inventory orders)</option><option value="Office Expense">Office Expense</option><option value="Repairs &amp; Maintenance">Repairs &amp; Maintenance</option><option value="Other">Other</option></select>
+<label>Uploaded by *</label><input type="text" name="uploaded_by" required list="mgrs" placeholder="Your name"><datalist id="mgrs"><option>Varun</option><option>Sanchari</option><option>Jonathan</option></datalist>
+</section>
+<section class="card"><h2><span class="dot"></span>Invoice details</h2>
+<label>Billed to (who the invoice is for) *</label><input type="text" name="billed_to" required list="billto" placeholder="Varsa Group LLC / store name on the invoice"><datalist id="billto"><option>Varsa Group LLC</option><option>Thomasville Chevron</option><option>Thomasville Outrun</option></datalist>
+<label>Vendor name *</label><input type="text" name="vendor" required list="vendors" placeholder="Coke, Pepsi, Golden Flake…"><datalist id="vendors"></datalist>
+<div class="grid"><div><label>Invoice # *</label><input type="text" name="invoice_no" required></div>
+<div><label>Payment terms</label><input type="text" name="terms" list="terms" placeholder="COD, Net 7…"><datalist id="terms"><option>COD</option><option>Due on receipt</option><option>Net 7</option><option>Net 15</option><option>Net 30</option><option>EFT / ACH draft</option><option>Check on delivery</option></datalist></div></div>
+<div class="grid"><div><label>Invoice date *</label><input type="date" name="invoice_date" required data-today></div><div><label>Due date</label><input type="date" name="due_date"></div></div>
+<div class="grid"><div><label>Subtotal ($)</label><input type="text" name="subtotal" inputmode="decimal" data-money placeholder="0.00"></div><div><label>Tax ($)</label><input type="text" name="tax" inputmode="decimal" data-money placeholder="0.00"></div></div>
+<label>Total amount ($) *</label><input type="text" name="total" inputmode="decimal" data-money required placeholder="0.00">
+<div class="note info hidden" id="mathNote"></div>
+<label class="check"><input type="checkbox" name="details_ok" checked> All required details present? <small>(vendor, invoice #, date, items, total, signed)</small></label>
+<div data-if="details_ok=No"><label>What's missing? *</label><textarea name="missing" required placeholder="e.g. no invoice #, not signed, total unclear"></textarea></div>
+</section>
+<section class="card"><h2><span class="dot"></span>Reimbursement</h2>
+<div class="q">Employee reimbursement? *</div><div class="chips" data-name="reimburse" data-req data-options="No|Yes"></div>
+<div data-if="reimburse=Yes" class="follow"><label>Reimburse to (employee name) *</label><input type="text" name="reimburse_to" required placeholder="Employee who paid">
+<div class="q">Paid with *</div><div class="chips" data-name="paid_with" data-req data-options="Cash|Personal card|Other"></div>
+<div class="note info">Logged as Reimbursement Status: <b>Pending</b> until paid back.</div></div></section>
+<section class="card"><h2><span class="dot"></span>Comment</h2><textarea name="comment" placeholder="Anything to note (shorts, credits, paid by check #…)"></textarea></section>
+<button class="btn" type="submit">⬆️ Upload Invoice</button></form>
+<section class="card"><h2><span class="dot"></span>Past invoices &amp; comments</h2>
+<div class="listbar"><select id="listStore" data-stores="all" data-extra="Office / Both"></select><select data-filter="category"><option value="">All categories</option><option>Store Purchase</option><option>Vendor / Order Invoice</option><option>Office Expense</option><option value="Repairs &amp; Maintenance">Repairs &amp; Maintenance</option><option>Other</option></select><select data-filter="reimburse"><option value="">Reimb. any</option><option value="Yes">Reimbursements only</option></select><input type="text" id="listSearch" placeholder="Search vendor, invoice #…"><button type="button" class="mini" id="listRefresh">↻</button></div><div id="listBody"></div></section>
+<p class="foot">Varsa Group LLC · Manager Tools · Drive › Varsa Group LLC › Invoices · Log › Invoices tab</p></div>
+<div class="toast" id="toast"></div>
+<script src="config.js"></script>
+<script>
+document.getElementById('vendors').innerHTML=VENDORS.filter(v=>!/Other/.test(v)).map(v=>'<option>'+v+'</option>').join('');
+const $m=s=>String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+window.DOC={kind:'invoice',pre:'INV',who:'uploaded_by',nameKey:'vm_name',storeKey:'vm_store',fileReq:true,fileMsg:'Scan or upload the invoice',
+ title:r=>$m(r.category)+' · '+$m(r.vendor)+' · #'+$m(r.invoice_no)+' · $'+$m(r.total),
+ meta:r=>'Invoice '+$m(r.invoice_date)+(r.due_date?' · due '+$m(r.due_date):'')+(r.terms?' · '+$m(r.terms):'')+' · billed to '+$m(r.billed_to)+' · by '+$m(r.uploaded_by)+(r.reimburse==='Yes'?' · 💸 reimburse '+$m(r.reimburse_to)+' ('+$m(r.paid_with)+') · <b>'+$m(r._reimb_status)+'</b>':'')+(r.details_ok==='No'?' · <b style="color:#b91c1c">Missing: '+$m(r.missing)+'</b>':' · ✔ details OK'),
+ validate:v=>{const n=x=>parseFloat(String(v(x)).replace(/[$,]/g,''))||0;if(!(n('total')>0))return 'Total must be more than 0';}};
+document.addEventListener('input',()=>{const n=x=>parseFloat(String((document.querySelector('[name='+x+']')||{}).value||'').replace(/[$,]/g,''));const s=n('subtotal'),t=n('tax'),T=n('total'),el=document.getElementById('mathNote');
+ if(!isNaN(s)&&!isNaN(T)){const d=Math.round((s+(isNaN(t)?0:t)-T)*100)/100;el.classList.toggle('hidden',d===0);el.textContent='Subtotal + tax = $'+(s+(isNaN(t)?0:t)).toFixed(2)+', total entered $'+T.toFixed(2)+'. Double-check.';}else el.classList.add('hidden');});
+</script><script src="docs.js"></script>
+</body></html>

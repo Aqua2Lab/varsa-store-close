@@ -1,0 +1,19 @@
+/* Varsa document apps (invoice / check / item issue / void) */
+.filebtns{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.fbtn{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;margin:0;padding:18px 10px;border-radius:16px;border:2px dashed color-mix(in srgb,var(--a1) 45%,#ece9f7);background:#faf9ff;cursor:pointer;text-align:center;font-weight:700}
+.fbtn small{font-weight:500;color:var(--muted)}.fbtn .big{font-size:1.8rem}.fbtn:active{transform:scale(.97)}
+.fbtn input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.fileitem{display:flex;align-items:center;gap:12px;padding:10px;margin-top:10px;border-radius:14px;background:#faf9ff;border:2px solid #ece9f7}
+.fileitem img,.fileitem .pdfic{width:56px;height:56px;border-radius:10px;object-fit:cover;flex:none}
+.fileitem .pdfic{display:grid;place-items:center;background:#fee2e2;color:#b91c1c;font-weight:800}
+.fileitem div{flex:1;min-width:0}.fileitem b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.9rem}.fileitem small{color:var(--muted)}
+input[type=datetime-local]{width:100%;padding:14px 16px;font:inherit;font-size:1.02rem;border:2px solid #ece9f7;border-radius:14px;background:#faf9ff;color:var(--ink)}
+.listbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:6px}.listbar select,.listbar input{flex:1 1 150px;padding:10px 12px;font-size:.95rem}
+.entry{border:2px solid #ece9f7;border-radius:16px;padding:14px;margin-top:12px;background:#fff}
+.e-top{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}.e-meta{color:var(--muted);font-size:.9rem;margin-top:4px}
+.e-files{margin-top:8px;display:flex;gap:12px;flex-wrap:wrap}.e-files a{font-weight:700;color:var(--a1);text-decoration:none}
+.e-com{margin-top:10px;padding-top:10px;border-top:1px dashed #e5e2f3;font-size:.92rem}.e-com ul{margin:6px 0;padding-left:18px}.e-com li{margin:3px 0;white-space:pre-wrap}
+.e-add{display:grid;gap:8px;margin-top:8px}.e-add input,.e-add textarea{padding:10px 12px;font-size:.95rem;min-height:0}.e-add textarea{min-height:56px}
+.e-add .mini{justify-self:start;padding:8px 14px;font-weight:700}
+.mini{border:1px solid #ccc;background:#fff;border-radius:8px;padding:4px 10px;font-size:13px;cursor:pointer}.muted{color:#777;font-size:14px}
+.badge{display:inline-block;padding:2px 8px;border-radius:999px;font-size:12px;font-weight:700;background:#eee}.badge.ok{background:#dcfce7;color:#166534}.badge.warn{background:#ffedd5;color:#9a3412}

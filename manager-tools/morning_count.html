@@ -17,7 +17,7 @@
 <p class="foot">Varsa GROUP LLC · Manager Tools · answers go to the Varsa Cashier Tools sheet</p></div>
 <div class="toast" id="toast"></div>
 <script>window.RECENT_COLS=[["count_date", "Night"], ["bundle_total", "Counted"], ["report_expected", "Expected"], ["difference", "Diff"], ["bundles_match", "Match"]];</script>
-<script src="config.js"></script><script src="app.js"></script><script>const n=x=>parseFloat(val(x)),$i=id=>document.getElementById(id);
+<script src="config.js"></script><script src="attach.js"></script><script src="app.js"></script><script>const n=x=>parseFloat(val(x)),$i=id=>document.getElementById(id);
 window.onChange=()=>{const c=n('bundle_total'),e=n('report_expected'),D=document.querySelector('[name=difference]');D.value='';
  if(!isNaN(c)&&!isNaN(e)){const d=Math.round((c-e)*100)/100;D.value=d.toFixed(2);$i('m_ok').classList.toggle('hidden',d!==0);$i('m_ok').textContent='✅ Cash matches the report.';
   $i('m_bad').classList.toggle('hidden',d===0);$i('m_bad').innerHTML='❗ '+(d<0?'SHORT':'OVER')+' <span class="big">$'+Math.abs(d).toFixed(2)+'</span>'+(d<0?' — report it to Varun now.':'');}

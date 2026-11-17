@@ -1,0 +1,45 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Check Upload · Varsa Manager Tools</title><link rel="stylesheet" href="styles.css"><link rel="stylesheet" href="docs.css">
+<style>:root{--a1:#4f46e5;--a2:#0ea5e9}</style></head><body><div class="wrap">
+<header class="hero"><div class="top"><a class="back" href="index.html">← Manager Home</a><span class="brand">Varsa Group LLC</span></div>
+<h1><span class="emo">🏦</span>Check Upload</h1><p>Snap or upload each check written to a vendor. The image goes to Drive › Varsa Group LLC › Checks and the details go to the Checks tab of the log.</p></header>
+<div class="note warn" style="margin:0 0 4px">🔒 Photo the front of the check only. Don't type bank account numbers anywhere on this page.</div>
+<form id="docForm" novalidate autocomplete="off">
+<section class="card"><h2><span class="dot"></span>Check image</h2>
+<div class="filebtns"><label class="fbtn"><span class="big">📷</span>Scan with camera<small>front of the check</small><input type="file" accept="image/*" capture="environment" data-file></label>
+<label class="fbtn"><span class="big">📁</span>Upload PDF / image<small>from phone or computer</small><input type="file" accept="application/pdf,image/*" multiple data-file></label></div>
+<div id="fileList"></div><div class="err" id="fileErr"></div></section>
+<section class="card"><h2><span class="dot"></span>Who &amp; where</h2>
+<label>Store *</label><select name="store" data-stores required></select>
+<label>Issued by * <small>(person who wrote / signed the check)</small></label><input type="text" name="issued_by" required list="mgrs" placeholder="Your name"><datalist id="mgrs"><option>Varun</option><option>Sanchari</option><option>Jonathan</option></datalist>
+</section>
+<section class="card"><h2><span class="dot"></span>Check details</h2>
+<div class="grid"><div><label>Check # *</label><input type="text" name="check_no" required inputmode="numeric"></div><div><label>Check date *</label><input type="date" name="check_date" required data-today></div></div>
+<label>Check amount ($) *</label><input type="text" name="amount" inputmode="decimal" data-money required placeholder="0.00">
+<label>Invoice # this check pays <small>(pick a logged invoice or type one)</small></label><input type="text" name="invoice_no" list="invoices" placeholder="Start typing invoice #"><datalist id="invoices"></datalist>
+<div class="note info hidden" id="invNote"></div>
+<label>Vendor name *</label><input type="text" name="vendor" required list="vendors" placeholder="Pay to the order of…"><datalist id="vendors"></datalist>
+<label>Vendor phone</label><input type="tel" name="vendor_phone" inputmode="tel" placeholder="(205) 555-1234">
+</section>
+<section class="card"><h2><span class="dot"></span>Comment</h2><textarea name="comment" placeholder="Partial payment, mailed, handed to rep…"></textarea></section>
+<button class="btn" type="submit">⬆️ Upload Check</button></form>
+<section class="card"><h2><span class="dot"></span>Past checks &amp; comments</h2>
+<div class="listbar"><select id="listStore" data-stores="all"></select><input type="text" id="listSearch" placeholder="Search vendor, check #, invoice #…"><button type="button" class="mini" id="listRefresh">↻</button></div><div id="listBody"></div></section>
+<p class="foot">Varsa Group LLC · Manager Tools · Drive › Varsa Group LLC › Checks · Log › Checks tab</p></div>
+<div class="toast" id="toast"></div>
+<script src="config.js"></script>
+<script>
+document.getElementById('vendors').innerHTML=VENDORS.filter(v=>!/Other/.test(v)).map(v=>'<option>'+v+'</option>').join('');
+const $m=s=>String(s==null?'':s).replace(/<|>|&/g,'');let INV=[];
+window.DOC={kind:'check',pre:'CHK',who:'issued_by',nameKey:'vm_name',storeKey:'vm_store',fileReq:true,fileMsg:'Snap or upload the check',
+ title:r=>'Check #'+$m(r.check_no)+' · $'+$m(r.amount)+' · '+$m(r.vendor),
+ meta:r=>'Dated '+$m(r.check_date)+(r.invoice_no?' · pays invoice #'+$m(r.invoice_no):'')+(r.vendor_phone?' · '+$m(r.vendor_phone):'')+' · issued by '+$m(r.issued_by),
+ validate:v=>{if(!(parseFloat(String(v('amount')).replace(/[$,]/g,''))>0))return 'Check amount must be more than 0';},
+ onReady:api=>{api.get({docs:'invoice',limit:300}).then(r=>{INV=(r&&r.rows)||[];document.getElementById('invoices').innerHTML=INV.map(i=>'<option value="'+$m(i.invoice_no).replace(/"/g,'')+'">'+$m(i.vendor)+' · $'+$m(i.total)+' · '+$m(i.invoice_date)+' · '+$m(String(i.store).replace('Thomasville ',''))+'</option>').join('');}).catch(()=>{});
+  const inv=document.querySelector('[name=invoice_no]'),note=document.getElementById('invNote');
+  inv.addEventListener('input',()=>{const m=INV.find(i=>String(i.invoice_no)===inv.value.trim());note.classList.toggle('hidden',!m);if(!m)return;
+   note.textContent='Logged invoice: '+m.vendor+' · total $'+m.total+' · dated '+m.invoice_date+' · '+m.store;
+   const v=document.querySelector('[name=vendor]');if(!v.value)v.value=m.vendor;const a=document.querySelector('[name=amount]');if(!a.value)a.value=String(m.total).replace(/[$,]/g,'');
+   const s=document.querySelector('[name=store]');if(!s.value)s.value=m.store;});}};
+</script><script src="docs.js"></script>
+</body></html>

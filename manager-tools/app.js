@@ -86,8 +86,9 @@
 
 
   // ===== Recent entries table (same page) =====
-  const COLS = window.RECENT_COLS || [];
+  const COLS = (window.RECENT_COLS || []).concat(form.querySelector('[data-attach]') ? [['_files', 'Files']] : []);
   const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const cell = v => /^https:\/\/drive\.google\.com\//.test(String(v)) ? String(v).split('\n').map((u, i) => '<a href="' + esc(u) + '" target="_blank" rel="noopener">📎' + (i + 1) + '</a>').join(' ') : esc(v);
   const wrap = document.createElement('div'); wrap.className = 'card recent';
   wrap.innerHTML = '<div class="recent-head"><b>Recent entries</b><button type="button" class="mini">↻ Refresh</button></div><div class="recent-body muted">Loading…</div>';
   form.insertAdjacentElement('afterend', wrap);
@@ -105,7 +106,7 @@
       const head = ['When', 'Store', 'By'].concat(COLS.map(c => c[1]));
       body.innerHTML = '<div class="tblwrap"><table><thead><tr>' + head.map(h => '<th>' + esc(h) + '</th>').join('') + '</tr></thead><tbody>' +
         rows.map(r => '<tr><td>' + esc(String(r._ts).replace(/:\d\d$/, '')) + '</td><td>' + esc(String(r.store).replace('Thomasville ', '')) + '</td><td>' + esc(r.cashier) + '</td>' +
-          COLS.map(c => '<td>' + esc(r[c[0]]) + '</td>').join('') + '</tr>').join('') + '</tbody></table></div>';
+          COLS.map(c => '<td>' + cell(r[c[0]]) + '</td>').join('') + '</tr>').join('') + '</tbody></table></div>';
     };
     sc.onerror = () => { done(); body.innerHTML = '<span class="muted">Could not load recent entries.</span>'; };
     sc.src = WEB_APP_URL + '?form=' + encodeURIComponent(FORM_KEY) + '&limit=200' + (store ? '&store=' + encodeURIComponent(store) : '') + '&callback=' + cb;

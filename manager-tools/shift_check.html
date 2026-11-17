@@ -19,7 +19,7 @@
 <p class="foot">Varsa GROUP LLC · Manager Tools · answers go to the Varsa Cashier Tools sheet</p></div>
 <div class="toast" id="toast"></div>
 <script>window.RECENT_COLS=[["shift_date", "Date"], ["shift", "Shift"], ["shift_cashier", "Cashier"], ["till_start", "$300"], ["till_close_photo", "Till"], ["short_over", "S/O"]];</script>
-<script src="config.js"></script><script src="app.js"></script><script>document.getElementById('copyMsg').addEventListener('click',()=>{const m=s=>(val(s)||'').startsWith('Done')?'✅':(val(s)?'❌':'⬜');
+<script src="config.js"></script><script src="attach.js"></script><script src="app.js"></script><script>document.getElementById('copyMsg').addEventListener('click',()=>{const m=s=>(val(s)||'').startsWith('Done')?'✅':(val(s)?'❌':'⬜');
  let t='📋 SHIFT CHECK – '+val('store')+' – '+val('shift_date')+' – Shift: '+val('shift')+'\nCashier: '+val('shift_cashier')+'\n'+m('till_start')+' Till start $300\n'+m('inside_trash')+' Inside trash\n'+m('outside_trash')+' Outside trash\n'+m('washroom_photo')+' Washroom photo\n'+m('esm_tasks_done')+' ESM tasks done: '+val('esm_tasks')+'\n'+m('till_close_photo')+' Till close photo ($ '+val('till_amount')+' | Short/Over $ '+val('short_over')+')';
  if(val('shift')==='Night')t+='\nNight only:\n'+m('washroom_deep')+' Washroom deep clean\n'+m('expiry_rotation')+' Expiry check + old stock to front\n'+m('faced')+' Products faced, all aisles\n'+m('store_close_drop')+' 11 PM store close + night drop';
  t+='\nIssues / Follow-up: '+(val('issues')||'None')+'\n– '+val('cashier')+' (ESM)';
