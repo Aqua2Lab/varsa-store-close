@@ -1,0 +1,32 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Void / No-Sale · Varsa Cashier Tools</title><link rel="stylesheet" href="styles.css"><link rel="stylesheet" href="docs.css">
+<style>:root{--a1:#7c3aed;--a2:#db2777}</style></head><body><div class="wrap">
+<header class="hero"><div class="top"><a class="back" href="index.html">← Cashier Home</a><span class="brand">Varsa Group LLC</span></div>
+<h1><span class="emo">🧾</span>Void / No-Sale</h1><p>Log every void and every no-sale (drawer open) right away, with a photo of the slip the register prints.</p></header>
+<form id="docForm" novalidate autocomplete="off">
+<section class="card"><h2><span class="dot"></span>What happened</h2>
+<label>Store *</label><select name="store" data-stores required></select>
+<div class="q">Type *</div><div class="chips" data-name="type" data-req data-options="Void|No-Sale"></div>
+<label>Reason *</label><input type="text" name="reason" required list="reasons" placeholder="Why?"><datalist id="reasons"><option>Wrong item rung</option><option>Customer changed mind</option><option>Price check</option><option>Card declined</option><option>Making change for customer</option><option>Fuel prepay change</option><option>Manager request</option></datalist>
+<label>Date / time *</label><input type="datetime-local" name="slip_time" required data-now>
+<label>Your name *</label><input type="text" name="cashier" required placeholder="Cashier name">
+</section>
+<section class="card"><h2><span class="dot"></span>Register slip</h2>
+<div class="filebtns"><label class="fbtn"><span class="big">📷</span>Photo of slip<small>camera</small><input type="file" accept="image/*" capture="environment" data-file></label>
+<label class="fbtn"><span class="big">🖼️</span>Upload<small>photo or PDF</small><input type="file" accept="image/*,application/pdf" multiple data-file></label></div>
+<div id="fileList"></div><div class="err" id="fileErr"></div>
+<label>Phone # on the slip <small>(if printed)</small></label><input type="tel" name="slip_phone" inputmode="tel" placeholder="(205) 555-1234">
+</section>
+<section class="card"><h2><span class="dot"></span>Comment</h2><textarea name="comment" placeholder="Anything else the manager should know"></textarea></section>
+<button class="btn" type="submit">📤 Log it</button></form>
+<section class="card"><h2><span class="dot"></span>Recent voids / no-sales &amp; comments</h2>
+<div class="listbar"><select id="listStore" data-stores="all"></select><input type="text" id="listSearch" placeholder="Search cashier, reason…"><button type="button" class="mini" id="listRefresh">↻</button></div><div id="listBody"></div></section>
+<p class="foot">Varsa Group LLC · Cashier Tools · slips in Drive › Varsa Group LLC › Voids &amp; No-Sales</p></div>
+<div class="toast" id="toast"></div>
+<script src="config.js"></script>
+<script>const $m=s=>String(s==null?'':s).replace(/<|>|&/g,'');
+window.DOC={kind:'void_ns',pre:'VNS',who:'cashier',nameKey:'vc_cashier',storeKey:'vc_store',fileReq:false,
+ validate:v=>{if(!document.querySelector('.fileitem')&&!confirm('No slip photo added. Log it anyway?'))return 'Add the slip photo';},
+ title:r=>$m(r.type)+' · '+$m(r.reason),meta:r=>[$m(String(r.slip_time).replace('T',' ')),'by '+$m(r.cashier),r.slip_phone?'slip phone '+$m(r.slip_phone):''].filter(Boolean).join(' · ')};
+</script><script src="docs.js"></script>
+</body></html>

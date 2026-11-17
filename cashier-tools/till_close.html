@@ -43,7 +43,7 @@
 <button class="btn" type="submit">Submit Till Close</button></form>
 <p class="foot">Varsa GROUP LLC · answers go to the Varsa Cashier Tracker sheet</p></div>
 <div class="toast" id="toast"></div>
-<script src="config.js"></script><script src="app.js"></script><script>
+<script src="config.js"></script><script src="attach.js"></script><script src="app.js"></script><script>
 const n=x=>parseFloat(val(x));const $i=id=>document.getElementById(id);
 window.onChange=()=>{const s=n('start_cash'),l=n('left_in_till'),c=n('cash_counted'),ex=n('expected_cash');
  const off=(!isNaN(s)&&s!==300)||(!isNaN(l)&&l!==300);$i('float').classList.toggle('hidden',!off);

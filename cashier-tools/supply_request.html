@@ -27,7 +27,7 @@
 </section><button class="btn" type="submit">Send Request</button></form>
 <p class="foot">Varsa GROUP LLC · answers go to the Varsa Cashier Tracker sheet</p></div>
 <div class="toast" id="toast"></div>
-<script src="config.js"></script><script src="app.js"></script><script>
+<script src="config.js"></script><script src="attach.js"></script><script src="app.js"></script><script>
 window.onChange=()=>{const out=/out/i.test(val('stock_level'))||['Already out','Less than 1 day'].includes(val('days_last'));
  document.getElementById('urgeNote').classList.toggle('hidden',!(out&&val('urgency')&&val('urgency')!=='Today'));};
 </script></body></html>

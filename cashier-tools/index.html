@@ -14,18 +14,30 @@
 .tile .go{position:absolute;right:20px;top:22px;font-size:1.4rem;opacity:.85;transition:transform .2s}.tile:hover .go{transform:translateX(4px)}
 .who{margin-top:16px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;color:var(--muted);font-size:.92rem}
 .who .pill{background:#fff;border-radius:999px;padding:8px 14px;box-shadow:0 4px 12px -6px #2b1d6b33;color:var(--ink);font-weight:600}
+.sect{margin:26px 4px 0;font-weight:800;color:var(--ink);font-size:1.05rem;display:flex;gap:8px;align-items:center}.tiles{margin-top:12px!important}
 </style></head><body><div class="wrap">
 <header class="hero"><div class="top"><span class="brand">Varsa GROUP LLC</span><span class="brand" id="clock"></span></div>
 <h1><span class="emo">⛽</span>Varsa Group LLC</h1><p>Cashier Tools · Thomasville Chevron &amp; OutRun · tap a tool to start</p></header>
 <div class="who" id="who"></div>
+<div class="sect">🏷️ Product Issues &amp; Stock</div>
 <nav class="tiles">
-<a class="tile" href="product_issue.html" style="--c1:#f97316;--c2:#facc15"><div class="ic">🏷️</div><b>Product Issue</b><span>Won't scan · deal missing · wrong price</span><span class="go">→</span></a>
+<a class="tile" href="product_issue.html" style="--c1:#f97316;--c2:#e11d48"><div class="ic">🏷️</div><b>Product Issue / Low Stock</b><span>Won't scan · missing / wrong price · deal · low or out</span><span class="go">→</span></a>
 <a class="tile" href="supply_request.html" style="--c1:#14b8a6;--c2:#22d3ee"><div class="ic">🧻</div><b>Supply Request</b><span>Bags · bands · cleaning · paper</span><span class="go">→</span></a>
-<a class="tile" href="low_stock.html" style="--c1:#8b5cf6;--c2:#ec4899"><div class="ic">📦</div><b>Low Stock</b><span>Running low or out on the shelf</span><span class="go">→</span></a>
-<a class="tile" href="shift_checklist.html" style="--c1:#ec4899;--c2:#f43f5e"><div class="ic">✅</div><b>Start of Shift</b><span>Till $300 · trash · washroom · tasks</span><span class="go">→</span></a>
-<a class="tile" href="till_close.html" style="--c1:#22c55e;--c2:#14b8a6"><div class="ic">💵</div><b>Till Close</b><span>End of every shift + 11 PM close</span><span class="go">→</span></a>
-<a class="tile" href="fuel_price.html" style="--c1:#3b82f6;--c2:#8b5cf6"><div class="ic">⛽</div><b>Fuel Price Change</b><span>MPC notice · sign · pumps</span><span class="go">→</span></a>
 </nav>
+<div class="sect">🧾 Transaction Tracking</div>
+<nav class="tiles">
+<a class="tile" href="void_nosale.html" style="--c1:#7c3aed;--c2:#db2777"><div class="ic">🧾</div><b>Void / No-Sale</b><span>Log every void &amp; drawer open + slip photo</span><span class="go">→</span></a>
+<a class="tile" href="till_close.html" style="--c1:#22c55e;--c2:#14b8a6"><div class="ic">💵</div><b>Till Close</b><span>End of every shift + 11 PM close</span><span class="go">→</span></a>
+</nav>
+<div class="sect">💵 Expenses</div>
+<nav class="tiles">
+<a class="tile" href="../manager-tools/expenses.html?from=cashier" style="--c1:#ea580c;--c2:#f43f5e"><div class="ic">💵</div><b>Expenses</b><span>Non-vendor cash out · photo of receipt</span><span class="go">→</span></a>
+</nav>
+<div class="sect">✅ Shift Tasks</div>
+<nav class="tiles">
+<a class="tile" href="shift_checklist.html" style="--c1:#ec4899;--c2:#f43f5e"><div class="ic">✅</div><b>Start of Shift</b><span>Till $300 · trash · washroom · tasks</span><span class="go">→</span></a>
+</nav>
+
 <p class="foot">Customers first · stay busy on camera · post photos in the group</p></div>
 <script>const n=localStorage.getItem('vc_cashier'),s=localStorage.getItem('vc_store');
 if(n||s)document.getElementById('who').innerHTML='Signed in on this computer:'+(n?' <span class="pill">👤 '+n.replace(/</g,'&lt;')+'</span>':'')+(s?' <span class="pill">📍 '+s+'</span>':'');
