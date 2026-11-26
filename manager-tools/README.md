@@ -1,55 +1,41 @@
 # Varsa Group LLC · Manager Tools
-
 Hosted at https://aqua2lab.github.io/varsa-store-close/manager-tools/
-
-Backend: one Apps Script web app, "Cashier Tools Intake". The file to paste is **`manager-tools/Code.gs`** (this folder). It serves Cashier Tools forms, Manager Tools forms, expenses, and the staff schedule. `cashier-tools/Code.gs` is an older copy. Do not paste that file over the live project or you will drop expenses and scheduling.
-
-- Reports (read only): `store_close.html` (Store Close Log > Entries), `cashier_activity.html` (Cashier Tools tabs)
-- Forms write tabs in the Varsa Cashier Tracker sheet. Each form page shows a scrollable Recent entries table.
-- Staff schedule: `schedule.html` (editors) and `schedule_view.html?name=...` (one person, phone friendly)
-- Optional script property `MANAGER_PIN` locks Store Close, Cashier Activity, and the full schedule load/save. The employee view stays open and returns only that person's shifts.
+Backend: the same "Cashier Tools Intake" Apps Script as Cashier Tools.
+Paste **manager-tools/Code.gs** when you redeploy. It is the live script (cashier forms, manager forms, expenses, and the staff schedule). `cashier-tools/Code.gs` does not include the schedule.
+- Reports (read only): store_close.html (Store Close Log > Entries), cashier_activity.html (Cashier Tools tabs)
+- Forms write new tabs in the "Varsa Cashier Tools" sheet; each shows a scrollable Recent entries table.
+- Optional: Script Property MANAGER_PIN locks report reads and the schedule editor behind a PIN. The phone schedule link (`schedule_view.html?name=...`) stays open so a person can see only their own shifts.
 
 ## Staff schedule
+- Editor: https://aqua2lab.github.io/varsa-store-close/manager-tools/schedule.html
+- One person’s phone view: https://aqua2lab.github.io/varsa-store-close/manager-tools/schedule_view.html?name=First%20Last
+- Demo (nothing is written to the sheet): add `?demo=1`
 
-`schedule.html` is the week grid (Monday–Sunday) for Thomasville Chevron and Thomasville OutRun. Cashiers are one person per shift per store. Jonathan Cowan's hours are a separate From/To block under the grid, plus an optional On call row. Shift names and hours live in the `SHIFT_STORES` block at the top of `schedule.js`.
+Week, Month, Year, and Scheduled list all read what is already saved. Week is the editor. Month lists each day’s names. Year summarizes every week. Scheduled list filters by dates, store, and person and can be printed.
 
-Until `Code.gs` is redeployed, the page opens in **demo mode** and keeps a sample week in the browser only. It does not write the Google Sheet. Use **Use the live sheet** after the redeploy below.
+There was no employee list in this repo (no Employees tab, no onboarding or direct-deposit roster). The schedule creates an **Employees** tab on the Varsa Cashier Tracker sheet and that tab is the only employee database. The manager maintains it.
 
-Tabs the script creates on the first save, in the Varsa Cashier Tracker spreadsheet:
+| Name | Role | Home Store | Phone | Status |
+|---|---|---|---|---|
+| Jonathan Cowan | manager | Both stores | | Active |
+| A cashier | cashier | Thomasville Chevron | | Active |
 
-| Tab | Columns |
-|---|---|
-| Schedule_Staff | Name, Role (`cashier` or `manager`), Home Store, Phone, Active (`Yes`/`No`) |
-| Schedule_Shifts | Week Start, Date, Store, Shift Name, Start, End, Employee, Notes |
-| Schedule_Manager | Date, Employee, Start Time, End Time, Notes, Kind (`day` or `oncall`), Week Start |
+- **Role** is `cashier` or `manager`.
+- **Status** must be `Active` (any capitalization, extra spaces ignored). Anything else is inactive.
+- Dropdowns list only Active cashiers (shift grid) or Active managers (manager section). On-call lines list every Active employee and show the home store.
+- A shift already saved for someone who is now inactive still shows, with an inactive flag. New picks have to be Active people from the list. Names are never typed.
 
-`Kind` and `Week Start` on the manager tab are extra columns so on-call rows and week replaces stay separate from the day hours.
+Other tabs the script creates:
 
-Check the logic without the sheet:
+- **Schedule_Shifts** — week start, date, store, shift name, start, end, employee, notes. Cashier shifts and store on-call lines (On-call 1, On-call 2, …) are stored by date.
+- **Schedule_Manager** — date, employee, start time, end time, notes, kind (`shift` or `oncall`). Salary hours. They are not part of the hourly budget.
+- **Schedule_Settings** — `base_pay_rate`, dollars per hour. The schedule page starts at $10.00 and the Save rate button writes this cell.
 
-```bash
-node manager-tools/schedule.test.js
-```
+Budget hours are one person for every hour the store is open. Chevron is 24 hours a day (168 a week, $1,680 at $10). OutRun is 5:00 AM to midnight, 19 hours a day (133 a week, $1,330 at $10). Change those numbers in `config.js` (`STORE_HOURS` and `SHIFT_TEMPLATES`). On-call lines are extra scheduled hours. Over budget is shown in amber.
 
-Open `schedule.html?demo=1` to click through the grid with the sample week.
-
-## Redeploy the Apps Script (same URL)
-
-Do this after any edit to `manager-tools/Code.gs`, including the staff schedule. **Manage deployments > Edit > New version** keeps the `/exec` URL already in `config.js`. A brand-new deployment would change the URL and every page would miss the sheet.
-
-1. Open the spreadsheet [Varsa Cashier Tracker](https://docs.google.com/spreadsheets/d/1K1bADx_bBnS2_Rfe8keggyUvmtMNxti1NXcagGuLJ3U/edit).
-2. **Extensions > Apps Script**.
-3. Select all of the script in the editor and replace it with the full contents of `manager-tools/Code.gs`. Save.
-4. **Deploy > Manage deployments**.
-5. On the deployment whose Web app URL matches `WEB_APP_URL` in `manager-tools/config.js`, click the pencil (**Edit**).
-6. **Version > New version**. Description example: `Staff schedule`.
-7. Execute as **Me**, Who has access **Anyone**. Click **Deploy**. The URL does not change.
-8. Open that `/exec` URL in a browser. The JSON should include `"schedule": 1`.
-
-Optional PIN (same property the other reports already use):
-
-1. Apps Script **Project Settings** (gear) > **Script properties**.
-2. Property `MANAGER_PIN`, value the pin managers should type.
-3. Loading or saving the full schedule then asks for it (the browser remembers it on that device). `schedule_view.html` does not ask, and it does not return phone numbers or anyone else's shifts.
-
-The three schedule tabs appear the first time someone saves a week. You do not create them by hand.
+### Redeploy the Apps Script (same web address)
+1. Open the Varsa Cashier Tracker sheet → **Extensions → Apps Script**.
+2. Replace the project code with `manager-tools/Code.gs` from this repo. Save.
+3. **Deploy → Manage deployments → Edit (pencil) → Version: New version → Deploy.**
+4. Do not create a second deployment. The `/exec` URL in `config.js` stays the same.
+5. Reload the schedule page. The Employees tab appears the first time the page loads. Add people, set Status to Active, then reload.

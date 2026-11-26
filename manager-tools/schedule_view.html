@@ -3,40 +3,27 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#1F2A44">
 <title>My Schedule · Varsa Group</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Open+Sans:wght@400;600;700&display=swap">
 <link rel="stylesheet" href="styles.css">
 <link rel="stylesheet" href="schedule.css">
 </head>
-<body data-page="schedule-view">
+<body class="sched-body" data-page="view">
 <div class="wrap">
 <header class="hero">
-  <div class="top"><a class="back" href="schedule.html" id="backLink">← Full schedule</a><span class="brand">Varsa Group LLC</span></div>
+  <div class="top"><a class="back" href="index.html">← Manager Home</a><span class="brand">Varsa Group LLC</span></div>
   <h1><span class="emo">📅</span>My Schedule</h1>
-  <p id="heroSub">Your shifts for the week</p>
+  <p id="viewSub">Your shifts for the week. This page is read only.</p>
 </header>
-<div id="modeBanner" class="note warn no-print hidden"></div>
-<section class="card no-print">
-  <label for="who">Your name</label>
-  <input type="text" id="who" list="names" placeholder="Your name" autocomplete="name">
-  <datalist id="names"></datalist>
-  <div class="picks" id="picks"></div>
-  <div class="weekbar">
-    <button type="button" class="mini" id="prevWeek" aria-label="Previous week">←</button>
-    <input type="date" id="weekDate" aria-label="Any day in the week">
-    <button type="button" class="mini" id="nextWeek" aria-label="Next week">→</button>
-  </div>
-  <strong id="weekLabel" class="week-label"></strong>
-  <div class="action-row">
-    <button type="button" class="mini" id="loadBtn">Show my week</button>
-    <button type="button" class="mini" id="printBtn">Print / PDF</button>
-  </div>
-</section>
-<div id="mine"></div>
-<p class="foot">Varsa Group LLC · My Schedule</p>
+<div id="demoBanner" class="note info hidden"></div>
+<div class="row-btns no-print">
+  <button type="button" class="mini" id="prevBtn">← Previous</button>
+  <button type="button" class="mini" id="nextBtn">Next →</button>
+  <button type="button" class="mini" id="spanBtn">Show this month</button>
+  <button type="button" class="mini" id="printBtn">Print / PDF</button>
+</div>
+<p id="periodLabel" class="rule"></p>
+<div id="viewRoot"><p class="muted">Loading…</p></div>
+<p class="foot">Varsa Group LLC · Staff schedule</p>
 </div>
 <div class="toast" id="toast"></div>
 <script src="config.js"></script>

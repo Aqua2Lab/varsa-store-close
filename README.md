@@ -8,7 +8,7 @@ Varsa Group LLC nightly store close form and Manager Tools.
 
 The schedule page matches the other Manager Tools screens and posts to the same Cashier Tools Intake Apps Script. Paste **`manager-tools/Code.gs`** into that project. Do not paste `cashier-tools/Code.gs` over it. That older file does not include expenses or scheduling.
 
-Until the script below is redeployed, the schedule page runs in demo mode in the browser (sample staff, not the Google Sheet).
+Add `?demo=1` to the schedule address to try it on this computer without the Google Sheet.
 
 ## Redeploy Apps Script (Manage deployments > Edit > New version)
 
@@ -19,8 +19,8 @@ This keeps the existing web app URL (`manager-tools/config.js` `WEB_APP_URL`).
 3. **Deploy > Manage deployments**.
 4. Pencil **Edit** on the deployment that matches the `/exec` URL in `config.js`.
 5. **Version > New version**, then **Deploy**. Do not create a second web app.
-6. Reload the `/exec` URL. The JSON includes `"schedule": 1` when this version is live.
+6. Reload the `/exec` URL. The JSON includes `"schedule": true` when this version is live.
 
-The first save creates tabs `Schedule_Staff`, `Schedule_Shifts`, and `Schedule_Manager`. Optional script property `MANAGER_PIN` gates the full schedule the same way it gates Store Close and Cashier Activity. The employee link does not use the PIN.
+The first load creates tabs `Employees`, `Schedule_Shifts`, `Schedule_Manager`, and `Schedule_Settings`. A person shows in the dropdowns only when Status is Active and Role is cashier or manager. Optional script property `MANAGER_PIN` gates the full schedule the same way it gates Store Close and Cashier Activity. The employee phone link does not use the PIN.
 
-More detail, including the sheet columns and `node manager-tools/schedule.test.js`, is in `manager-tools/README.md`.
+Open hours and shift times are edited in `manager-tools/config.js`. The base pay rate starts at $10.00 and is saved on `Schedule_Settings`. More detail is in `manager-tools/README.md`. Check the date math with `node manager-tools/schedule.test.js`.
