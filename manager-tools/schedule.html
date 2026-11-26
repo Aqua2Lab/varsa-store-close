@@ -1,21 +1,83 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Schedule &amp; Time Cards · Varsa Manager Tools</title><link rel="stylesheet" href="styles.css">
-<style>:root{--a1:#3b82f6;--a2:#14b8a6}</style></head><body><div class="wrap">
-<header class="hero"><div class="top"><a class="back" href="index.html">← Manager Home</a><span class="brand">Varsa Group LLC</span></div>
-<h1><span class="emo">⏱️</span>Schedule &amp; Time Cards</h1><p>Schedule posted by Thursday for next week, with a named backup for every shift. Time card fixes approved before payroll.</p></header>
-<form data-form="schedule" novalidate autocomplete="off">
-<section class="card"><h2><span class="dot"></span>Who &amp; where</h2>
-<div class="q">Store</div><div class="chips" id="storeBox" data-name="store" data-req></div>
-<label>Your name</label><input type="text" name="cashier" required list="mgrs" placeholder="Varun, Sanchari, Jonathan…"><datalist id="mgrs"><option>Varun</option><option>Sanchari</option><option>Jonathan</option></datalist>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#1F2A44">
+<title>Staff Schedule · Varsa Manager Tools</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Open+Sans:wght@400;600;700&display=swap">
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="schedule.css">
+<!-- Shift names and hours: edit SHIFT_STORES at the top of schedule.js. -->
+</head>
+<body data-page="schedule">
+<div class="wrap sched-wrap">
+<header class="hero">
+  <div class="top"><a class="back" href="index.html">← Manager Home</a><span class="brand">Varsa Group LLC</span></div>
+  <h1><span class="emo">📅</span>Staff Schedule</h1>
+  <p id="heroSub">Thomasville Chevron and Thomasville OutRun</p>
+</header>
+
+<div id="modeBanner" class="note warn no-print hidden"></div>
+
+<section class="card no-print">
+  <h2><span class="dot"></span>Week</h2>
+  <div class="weekbar">
+    <button type="button" class="mini" id="prevWeek" aria-label="Previous week">←</button>
+    <input type="date" id="weekDate" aria-label="Any day in the week">
+    <button type="button" class="mini" id="nextWeek" aria-label="Next week">→</button>
+    <strong id="weekLabel" class="week-label"></strong>
+  </div>
+  <p class="hint">Weeks run Monday through Sunday. Pick any day and it snaps to that Monday.</p>
+  <p class="hint" id="dirtyTag"></p>
+  <div class="sched-actions">
+    <button type="button" class="btn" id="saveBtn" disabled>Save</button>
+    <div class="action-row">
+      <button type="button" class="mini" id="copyBtn">Copy last week</button>
+      <button type="button" class="mini" id="loadBtn">Load</button>
+      <button type="button" class="mini" id="printBtn">Print / PDF</button>
+      <a class="mini" id="viewLink" href="schedule_view.html">Employee view</a>
+    </div>
+  </div>
 </section>
-<section class="card"><h2><span class="dot"></span>Schedule</h2>
-<label>Week starting (Monday)</label><input type="date" name="week_start" required><div class="q">Posted by Thursday?</div><div class="chips" data-name="posted_by_thu" data-req data-options="Yes|Late|Not yet"></div><div class="q">Named backup for every shift?</div><div class="chips" data-name="backup_every_shift" data-req data-options="Yes|No"></div><label>Open shifts / gaps</label><textarea name="gaps" placeholder=""></textarea>
-</section><section class="card"><h2><span class="dot"></span>Time cards</h2>
-<div class="q">Any time card corrections?</div><div class="chips" data-name="timecard_fixes" data-req data-options="Yes|No"></div><div class="follow" data-if="timecard_fixes=Yes"><label>Who, which day, what changed</label><textarea name="fix_details" placeholder="" required></textarea><div class="q">Approved before payroll?</div><div class="chips" data-name="approved_before_payroll" data-req data-options="Yes|Not yet"></div></div><label>Notes</label><textarea name="notes" placeholder=""></textarea>
+
+<section class="card screen-only" id="checksCard">
+  <h2><span class="dot"></span>Checks <span class="badge" id="flagCount"></span></h2>
+  <div id="flags" aria-live="polite"><span class="muted">Loading…</span></div>
 </section>
-<button class="btn" type="submit">Save Schedule Check</button></form>
-<p class="foot">Varsa GROUP LLC · Manager Tools · answers go to the Varsa Cashier Tools sheet</p></div>
+
+<section class="card screen-only" id="totalsCard">
+  <h2><span class="dot"></span>Hours this week</h2>
+  <div id="totals" class="muted">Loading…</div>
+</section>
+
+<div id="grids"></div>
+
+<section class="card screen-only" id="managerCard">
+  <h2><span class="dot"></span>Manager schedule</h2>
+  <p class="lede" id="managerLede"></p>
+  <label for="managerName">Manager</label>
+  <input type="text" id="managerName" autocomplete="name">
+  <div id="managerGrid"></div>
+</section>
+
+<section class="card no-print" id="staffCard">
+  <h2><span class="dot"></span>Staff</h2>
+  <p class="lede">Cashiers appear in the shift lists. The store manager is scheduled in the section above, not on a cashier shift. Home store only groups the list. Anyone active can work either store.</p>
+  <div id="staffList"></div>
+  <button type="button" class="mini" id="addStaff">Add person</button>
+  <p class="hint">To change shift names or hours, edit the SHIFT_STORES block at the top of schedule.js.</p>
+</section>
+
+<div class="print-only" id="printSheet"></div>
+
+<p class="foot">Varsa Group LLC · Manager Tools · Staff schedule</p>
+</div>
 <div class="toast" id="toast"></div>
-<script>window.RECENT_COLS=[["week_start", "Week"], ["posted_by_thu", "By Thu"], ["backup_every_shift", "Backups"], ["timecard_fixes", "TC fixes"], ["approved_before_payroll", "Approved"]];</script>
-<script src="config.js"></script><script src="attach.js"></script><script src="app.js"></script>
-</body></html>
+<script src="config.js"></script>
+<script src="mgr.js"></script>
+<script src="schedule.js"></script>
+</body>
+</html>
