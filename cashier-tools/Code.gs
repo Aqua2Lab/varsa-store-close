@@ -1,4 +1,8 @@
 /**
+ * NOTE: The live "Cashier Tools Intake" web app is maintained in manager-tools/Code.gs
+ * (manager forms, expenses, and the staff schedule). Paste THAT file when you redeploy.
+ * This copy is the cashier-form portion only.
+ *
  * Varsa GROUP LLC - Cashier Tools + Manager Tools web app (one deployment)
  * Sheet: "Varsa Cashier Tracker" (Varsa Group LLC > Daily Operations)
  * https://docs.google.com/spreadsheets/d/1K1bADx_bBnS2_Rfe8keggyUvmtMNxti1NXcagGuLJ3U/edit

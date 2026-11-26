@@ -9,6 +9,11 @@
  *
  * Every form posts JSON {form:"<key>", store, cashier, ...fields}.
  * Each field lands in its own column. Hidden follow-up questions arrive blank.
+ *
+ * Staff schedule (same deployment, same URL): after editing this file use
+ * Deploy > Manage deployments > Edit (pencil) > Version: New version > Deploy.
+ * Do not create a second web app. config.js already has the /exec URL.
+ * New tabs on this sheet: Employees, Schedule_Shifts, Schedule_Manager, Schedule_Settings.
  */
 const SHEET_ID = '1K1bADx_bBnS2_Rfe8keggyUvmtMNxti1NXcagGuLJ3U';
 
@@ -294,6 +299,7 @@ function doPost(e) {
     lock.waitLock(20000);
     const data = JSON.parse((e && e.postData && e.postData.contents) || '{}');
     if (data.form === 'expense') return json_(expense_(data));
+    if (data.form === 'schedule_save' || data.form === 'schedule_settings') return json_(schedulePost_(data));
     const spec = SCHEMA[data.form];
     if (!spec) return json_({ ok: false, error: 'Unknown form: ' + data.form });
     const sh = getTab_(spec);
@@ -323,13 +329,18 @@ function doPost(e) {
 // ?form=<key>&store=&limit=&callback=   recent rows of one tab (Cashier + Manager forms)
 // ?action=activity&store=&limit=&callback=   recent rows of every Cashier Tools tab in one call
 // ?action=storeclose&store=&from=&to=&callback=   Store Close Log entries, READ-ONLY
-// Optional: set Script Property MANAGER_PIN to require &pin= on the two action calls.
+// ?action=employees&callback=   active employees (name, role, home_store) + base pay rate
+// ?action=schedule&from=&to=&callback=   saved shifts and manager rows in a date range
+// ?action=myschedule&name=&from=&to=&callback=   one person's rows (phone view, no PIN)
+// Optional: set Script Property MANAGER_PIN to require &pin= on the manager reads and schedule saves.
+// myschedule stays open so a cashier can open their phone link.
 const STORE_CLOSE_ID = '149QWdotKvCoGT3gUosi_-oqPSdMeqT3tKH6yI5UE548'; // "Varsa Store Close Log" (read only)
 const CASHIER_FORMS = ['till_close', 'product_issue', 'supply_request', 'low_stock', 'shift_checklist', 'fuel_price'];
 
 function doGet(e) {
   const p = (e && e.parameter) || {};
   try {
+    if (p.action === 'employees' || p.action === 'schedule' || p.action === 'myschedule') return scheduleGet_(p);
     if (p.action === 'storeclose' || p.action === 'activity') {
       const pin = PropertiesService.getScriptProperties().getProperty('MANAGER_PIN');
       if (pin && String(p.pin || '') !== String(pin)) return out_({ ok: false, error: 'PIN required', pin: true }, p.callback);
@@ -472,4 +483,325 @@ function expenseRows_(p) {
   let rows = sh.getRange(start, 1, last - start + 1, keys.length).getDisplayValues().map(function (r) { const o = {}; keys.forEach(function (k, i) { o[k] = r[i]; }); return o; });
   if (p.store) rows = rows.filter(function (o) { return o.store === p.store; });
   return rows.reverse().slice(0, Math.min(parseInt(p.limit, 10) || 50, 200));
+}
+
+
+// ===== Staff schedule =====
+// Employees is the one employee list. The manager maintains it.
+// Status must be Active (any capitalization). Role must be cashier or manager.
+// Only those rows are returned to the schedule dropdowns.
+// Schedule_Shifts: one row per cashier shift or store on-call line, stored by date.
+// Schedule_Manager: store-manager From/To (and optional manager on-call), not hourly budget.
+// Schedule_Settings: base_pay_rate (dollars per hour). Default 10.
+var SHIFT_HEADERS_ = ['Week Start', 'Date', 'Store', 'Shift Name', 'Start', 'End', 'Employee', 'Notes'];
+var MGR_HEADERS_ = ['Date', 'Employee', 'Start Time', 'End Time', 'Notes', 'Kind'];
+var SCHED_STORES_ = ['Thomasville Chevron', 'Thomasville OutRun'];
+
+function schedPinOk_(p) {
+  var pin = PropertiesService.getScriptProperties().getProperty('MANAGER_PIN');
+  if (!pin) return true;
+  return String((p && p.pin) || '') === String(pin);
+}
+function schedTz_() {
+  return SpreadsheetApp.openById(SHEET_ID).getSpreadsheetTimeZone() || 'America/Chicago';
+}
+function ensureSchedTab_(name, headers) {
+  var ss = SpreadsheetApp.openById(SHEET_ID);
+  var sh = ss.getSheetByName(name);
+  if (!sh) {
+    sh = ss.insertSheet(name);
+    sh.getRange(1, 1, 1, headers.length).setValues([headers]).setFontWeight('bold');
+    sh.setFrozenRows(1);
+  }
+  return sh;
+}
+function ensureEmployees_() {
+  var sh = ensureSchedTab_('Employees', ['Name', 'Role', 'Home Store', 'Phone', 'Status']);
+  if (!sh.getRange('A1').getNote()) {
+    sh.getRange('A1').setNote('Manager keeps this list. Role: cashier or manager. Status: Active or Inactive. Only Active people with those roles appear on the schedule. Home store is shown next to the name.');
+  }
+  return sh;
+}
+function ensureSettings_() {
+  var sh = ensureSchedTab_('Schedule_Settings', ['Key', 'Value']);
+  if (!sh.getRange('A1').getNote()) {
+    sh.getRange('A1').setNote('base_pay_rate is dollars per hour for cashier shifts and store on-call lines. The schedule page edits this. Manager salary is not calculated from this rate. Store open hours live in manager-tools/config.js.');
+  }
+  if (sh.getLastRow() < 2) sh.appendRow(['base_pay_rate', 10]);
+  return sh;
+}
+function normRate_(v) {
+  var n = parseFloat(v);
+  if (!isFinite(n) || n < 0 || n > 500) return null;
+  return Math.round(n * 100) / 100;
+}
+function settingsRead_() {
+  var sh = ensureSettings_();
+  var rate = 10, last = sh.getLastRow();
+  if (last >= 2) {
+    sh.getRange(2, 1, last - 1, 2).getValues().forEach(function (r) {
+      if (String(r[0] || '').trim() === 'base_pay_rate') {
+        var n = normRate_(r[1]);
+        if (n != null) rate = n;
+      }
+    });
+  }
+  return { base_pay_rate: rate };
+}
+function writeRate_(n) {
+  var sh = ensureSettings_();
+  var last = sh.getLastRow(), found = false;
+  if (last >= 2) {
+    var vals = sh.getRange(2, 1, last - 1, 2).getValues();
+    for (var i = 0; i < vals.length; i++) {
+      if (String(vals[i][0] || '').trim() === 'base_pay_rate') {
+        sh.getRange(i + 2, 2).setValue(n);
+        found = true;
+        break;
+      }
+    }
+  }
+  if (!found) sh.appendRow(['base_pay_rate', n]);
+}
+function normRole_(v) {
+  var s = String(v || '').trim().toLowerCase();
+  if (s === 'manager' || s === 'store manager' || s === 'mgr') return 'manager';
+  if (s === 'cashier') return 'cashier';
+  return '';
+}
+function employeesRead_() {
+  var sh = ensureEmployees_();
+  var last = sh.getLastRow();
+  if (last < 2) return [];
+  var out = [];
+  sh.getRange(2, 1, last - 1, 5).getValues().forEach(function (r) {
+    var name = String(r[0] || '').trim();
+    if (!name) return;
+    if (String(r[4] || '').trim().toLowerCase() !== 'active') return;
+    var role = normRole_(r[1]);
+    if (!role) return;
+    out.push({ name: name, role: role, home_store: String(r[2] || '').trim() });
+  });
+  out.sort(function (a, b) { return a.name < b.name ? -1 : a.name > b.name ? 1 : 0; });
+  return out;
+}
+function normDate_(v) {
+  if (Object.prototype.toString.call(v) === '[object Date]' && !isNaN(v.getTime())) {
+    return Utilities.formatDate(v, schedTz_(), 'yyyy-MM-dd');
+  }
+  var s = String(v || '').trim().replace(/^'/, '');
+  var m = s.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (m) return m[1] + '-' + m[2] + '-' + m[3];
+  return '';
+}
+function cellDate_(v) {
+  if (Object.prototype.toString.call(v) === '[object Date]' && !isNaN(v.getTime())) {
+    return Utilities.formatDate(v, schedTz_(), 'yyyy-MM-dd');
+  }
+  var s = String(v == null ? '' : v).trim().replace(/^'/, '');
+  var m = s.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (m) return m[1] + '-' + m[2] + '-' + m[3];
+  var m2 = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+  if (m2) return m2[3] + '-' + ('0' + m2[1]).slice(-2) + '-' + ('0' + m2[2]).slice(-2);
+  return '';
+}
+function cellTime_(v) {
+  if (Object.prototype.toString.call(v) === '[object Date]' && !isNaN(v.getTime())) {
+    return Utilities.formatDate(v, schedTz_(), 'HH:mm');
+  }
+  if (typeof v === 'number' && isFinite(v)) {
+    var mins = Math.round((v % 1) * 1440) % 1440;
+    if (mins < 0) mins += 1440;
+    return ('0' + Math.floor(mins / 60)).slice(-2) + ':' + ('0' + (mins % 60)).slice(-2);
+  }
+  return normTime_(v);
+}
+function normTime_(v) {
+  var s = String(v == null ? '' : v).trim().replace(/^'/, '');
+  var m = s.match(/^(\d{1,2}):(\d{2})/);
+  if (!m) return '';
+  var hh = +m[1];
+  if (hh === 24 && m[2] === '00') return '00:00';
+  if (hh > 23 || +m[2] > 59) return '';
+  return ('0' + hh).slice(-2) + ':' + m[2];
+}
+function mondayOfIso_(iso) {
+  var p = iso.split('-');
+  var dt = new Date(Date.UTC(+p[0], +p[1] - 1, +p[2]));
+  var day = dt.getUTCDay();
+  var diff = day === 0 ? -6 : 1 - day;
+  dt.setUTCDate(dt.getUTCDate() + diff);
+  return dt.toISOString().slice(0, 10);
+}
+function text_(v) {
+  var s = String(v == null ? '' : v).trim();
+  if (!s) return '';
+  return s.charAt(0) === "'" ? s : "'" + s;
+}
+function clip_(v, n) {
+  return String(v == null ? '' : v).trim().slice(0, n);
+}
+function readShifts_() {
+  var sh = ensureSchedTab_('Schedule_Shifts', SHIFT_HEADERS_);
+  var last = sh.getLastRow();
+  if (last < 2) return [];
+  var out = [];
+  sh.getRange(2, 1, last - 1, SHIFT_HEADERS_.length).getValues().forEach(function (r) {
+    var date = cellDate_(r[1]);
+    if (!date) return;
+    out.push({
+      week_start: cellDate_(r[0]) || mondayOfIso_(date),
+      date: date,
+      store: String(r[2] || '').replace(/^'/, '').trim(),
+      shift_name: String(r[3] || '').replace(/^'/, '').trim(),
+      start: cellTime_(r[4]),
+      end: cellTime_(r[5]),
+      employee: String(r[6] || '').replace(/^'/, '').trim(),
+      notes: String(r[7] || '').replace(/^'/, '').trim()
+    });
+  });
+  return out;
+}
+function readManagers_() {
+  var sh = ensureSchedTab_('Schedule_Manager', MGR_HEADERS_);
+  var last = sh.getLastRow();
+  if (last < 2) return [];
+  var out = [];
+  sh.getRange(2, 1, last - 1, MGR_HEADERS_.length).getValues().forEach(function (r) {
+    var date = cellDate_(r[0]);
+    if (!date) return;
+    var kind = String(r[5] || '').replace(/^'/, '').trim().toLowerCase();
+    out.push({
+      date: date,
+      employee: String(r[1] || '').replace(/^'/, '').trim(),
+      start: cellTime_(r[2]),
+      end: cellTime_(r[3]),
+      notes: String(r[4] || '').replace(/^'/, '').trim(),
+      kind: kind === 'oncall' ? 'oncall' : 'shift'
+    });
+  });
+  return out;
+}
+function forceTextRow_(r, width, dateCols, timeCols) {
+  var o = [];
+  for (var i = 0; i < width; i++) {
+    var s = '';
+    if (dateCols.indexOf(i) !== -1) s = cellDate_(r[i]);
+    else if (timeCols.indexOf(i) !== -1) s = cellTime_(r[i]);
+    else s = String(r[i] == null ? '' : r[i]).replace(/^'/, '').trim();
+    o.push(s ? "'" + s : '');
+  }
+  return o;
+}
+function rewriteByDate_(sh, width, dateCol, dateSet, newRows, dateCols, timeCols) {
+  var last = sh.getLastRow();
+  var keep = [];
+  if (last >= 2) {
+    sh.getRange(2, 1, last - 1, width).getValues().forEach(function (r) {
+      var dt = cellDate_(r[dateCol]);
+      if (!dt || !dateSet[dt]) keep.push(forceTextRow_(r, width, dateCols, timeCols));
+    });
+  }
+  var all = keep.concat(newRows);
+  var oldN = Math.max(0, last - 1);
+  if (oldN) sh.getRange(2, 1, oldN, width).clearContent();
+  if (!all.length) return;
+  sh.getRange(2, 1, all.length, width).setValues(all);
+  if (all.length > 1) sh.getRange(2, 1, all.length, width).sort({ column: dateCol + 1, ascending: true });
+}
+function scheduleGet_(p) {
+  if (p.action !== 'myschedule' && !schedPinOk_(p)) return out_({ ok: false, error: 'PIN required', pin: true }, p.callback);
+  if (p.action === 'employees') {
+    return out_({ ok: true, schedule: true, employees: employeesRead_(), base_pay_rate: settingsRead_().base_pay_rate }, p.callback);
+  }
+  var from = normDate_(p.from), to = normDate_(p.to);
+  if (!from || !to) return out_({ ok: false, error: 'Use from and to dates.' }, p.callback);
+  if (from > to) return out_({ ok: false, error: 'The start date is after the end date.' }, p.callback);
+  var span = Math.round((new Date(to + 'T00:00:00Z') - new Date(from + 'T00:00:00Z')) / 86400000);
+  if (span > 400) return out_({ ok: false, error: 'Pick 400 days or fewer.' }, p.callback);
+  var data = { ok: true, schedule: true, from: from, to: to, shifts: [], manager: [] };
+  readShifts_().forEach(function (r) { if (r.date >= from && r.date <= to) data.shifts.push(r); });
+  readManagers_().forEach(function (r) { if (r.date >= from && r.date <= to) data.manager.push(r); });
+  if (p.action === 'myschedule') {
+    var name = String(p.name || '').trim();
+    if (!name) return out_({ ok: false, error: 'Add the employee name to the link.' }, p.callback);
+    data.employee = name;
+    data.shifts = data.shifts.filter(function (r) { return r.employee === name; });
+    data.manager = data.manager.filter(function (r) { return r.employee === name; });
+    return out_(data, p.callback);
+  }
+  data.base_pay_rate = settingsRead_().base_pay_rate;
+  return out_(data, p.callback);
+}
+function schedulePost_(d) {
+  if (!schedPinOk_(d)) return { ok: false, error: 'PIN required', pin: true };
+  if (d.form === 'schedule_settings') {
+    var rateOnly = normRate_(d.base_pay_rate);
+    if (rateOnly == null) return { ok: false, error: 'Enter a pay rate from 0 to 500.' };
+    writeRate_(rateOnly);
+    return { ok: true, schedule: true, base_pay_rate: rateOnly };
+  }
+  return scheduleSave_(d);
+}
+function scheduleSave_(d) {
+  var dateSet = {}, dates = [];
+  (Array.isArray(d.dates) ? d.dates : []).forEach(function (x) {
+    var n = normDate_(x);
+    if (n && !dateSet[n]) { dateSet[n] = true; dates.push(n); }
+  });
+  if (!dates.length) return { ok: false, error: 'No dates to save.' };
+  if (dates.length > 400) return { ok: false, error: 'Save 400 days or fewer at a time.' };
+  var active = {};
+  employeesRead_().forEach(function (e) { active[e.name] = e.role; });
+  var existing = {};
+  readShifts_().forEach(function (r) { if (dateSet[r.date] && r.employee) existing[r.employee] = true; });
+  readManagers_().forEach(function (r) { if (dateSet[r.date] && r.employee) existing[r.employee] = true; });
+  var bad = {};
+  function allow(name, role) {
+    if (!name) return true;
+    if (active[name] && (!role || active[name] === role)) return true;
+    if (existing[name]) return true;
+    bad[name] = true;
+    return false;
+  }
+  var shiftRows = [];
+  (Array.isArray(d.shifts) ? d.shifts : []).forEach(function (s) {
+    var date = normDate_(s.date);
+    if (!date || !dateSet[date]) return;
+    var store = String(s.store || '').trim();
+    if (SCHED_STORES_.indexOf(store) === -1) return;
+    var shiftName = clip_(s.shift_name, 40);
+    if (!shiftName) return;
+    var name = clip_(s.employee, 80);
+    var oncall = /^on-call\s+\d+$/i.test(shiftName);
+    if (!allow(name, oncall ? '' : 'cashier')) return;
+    var start = normTime_(s.start), end = normTime_(s.end);
+    if (oncall && !name && !start && !end && !clip_(s.notes, 500)) return;
+    shiftRows.push([text_(mondayOfIso_(date)), text_(date), text_(store), text_(shiftName), text_(start), text_(end), text_(name), text_(clip_(s.notes, 500))]);
+  });
+  var mgrRows = [];
+  (Array.isArray(d.manager) ? d.manager : []).forEach(function (s) {
+    var date = normDate_(s.date);
+    if (!date || !dateSet[date]) return;
+    var name = clip_(s.employee, 80);
+    var start = normTime_(s.start), end = normTime_(s.end), notes = clip_(s.notes, 500);
+    if (!name && !start && !end && !notes) return;
+    if (!allow(name, 'manager')) return;
+    var kind = String(s.kind || '').toLowerCase() === 'oncall' ? 'oncall' : 'shift';
+    mgrRows.push([text_(date), text_(name), text_(start), text_(end), text_(notes), text_(kind)]);
+  });
+  var badNames = Object.keys(bad);
+  if (badNames.length) return { ok: false, error: 'These names are not active employees: ' + badNames.join(', ') };
+  rewriteByDate_(ensureSchedTab_('Schedule_Shifts', SHIFT_HEADERS_), SHIFT_HEADERS_.length, 1, dateSet, shiftRows, [0, 1], [4, 5]);
+  rewriteByDate_(ensureSchedTab_('Schedule_Manager', MGR_HEADERS_), MGR_HEADERS_.length, 0, dateSet, mgrRows, [0], [2, 3]);
+  var rate = normRate_(d.base_pay_rate);
+  if (rate != null) writeRate_(rate);
+  return { ok: true, schedule: true, dates: dates.length, shifts: shiftRows.length, manager: mgrRows.length, base_pay_rate: rate != null ? rate : settingsRead_().base_pay_rate };
+}
+/** Run once from the Apps Script editor to create the schedule tabs. */
+function setupSchedule() {
+  ensureEmployees_();
+  ensureSchedTab_('Schedule_Shifts', SHIFT_HEADERS_);
+  ensureSchedTab_('Schedule_Manager', MGR_HEADERS_);
+  ensureSettings_();
 }

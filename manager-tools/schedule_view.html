@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>My Schedule · Varsa Group</title>
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="schedule.css">
+</head>
+<body class="sched-body" data-page="view">
+<div class="wrap">
+<header class="hero">
+  <div class="top"><a class="back" href="index.html">← Manager Home</a><span class="brand">Varsa Group LLC</span></div>
+  <h1><span class="emo">📅</span>My Schedule</h1>
+  <p id="viewSub">Your shifts for the week. This page is read only.</p>
+</header>
+<div id="demoBanner" class="note info hidden"></div>
+<div class="row-btns no-print">
+  <button type="button" class="mini" id="prevBtn">← Previous</button>
+  <button type="button" class="mini" id="nextBtn">Next →</button>
+  <button type="button" class="mini" id="spanBtn">Show this month</button>
+  <button type="button" class="mini" id="printBtn">Print / PDF</button>
+</div>
+<p id="periodLabel" class="rule"></p>
+<div id="viewRoot"><p class="muted">Loading…</p></div>
+<p class="foot">Varsa Group LLC · Staff schedule</p>
+</div>
+<div class="toast" id="toast"></div>
+<script src="config.js"></script>
+<script src="mgr.js"></script>
+<script src="schedule.js"></script>
+</body>
+</html>

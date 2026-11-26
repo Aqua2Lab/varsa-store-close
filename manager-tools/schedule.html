@@ -1,21 +1,84 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Schedule &amp; Time Cards · Varsa Manager Tools</title><link rel="stylesheet" href="styles.css">
-<style>:root{--a1:#3b82f6;--a2:#14b8a6}</style></head><body><div class="wrap">
-<header class="hero"><div class="top"><a class="back" href="index.html">← Manager Home</a><span class="brand">Varsa Group LLC</span></div>
-<h1><span class="emo">⏱️</span>Schedule &amp; Time Cards</h1><p>Schedule posted by Thursday for next week, with a named backup for every shift. Time card fixes approved before payroll.</p></header>
-<form data-form="schedule" novalidate autocomplete="off">
-<section class="card"><h2><span class="dot"></span>Who &amp; where</h2>
-<div class="q">Store</div><div class="chips" id="storeBox" data-name="store" data-req></div>
-<label>Your name</label><input type="text" name="cashier" required list="mgrs" placeholder="Varun, Sanchari, Jonathan…"><datalist id="mgrs"><option>Varun</option><option>Sanchari</option><option>Jonathan</option></datalist>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Staff Schedule · Varsa Manager Tools</title>
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="schedule.css">
+</head>
+<body class="sched-body" data-page="edit">
+<div class="wrap">
+<header class="hero">
+  <div class="top"><a class="back" href="index.html">← Manager Home</a><span class="brand">Varsa Group LLC</span></div>
+  <h1><span class="emo">📅</span>Staff Schedule</h1>
+  <p>Thomasville Chevron and Thomasville OutRun. Pick people from the active employee list. Plan any week, month, or year.</p>
+</header>
+
+<div id="demoBanner" class="note info hidden"></div>
+<div id="redeploy" class="note warn hidden">The Google Sheet script does not have the schedule update yet. Open the Apps Script project, paste <b>manager-tools/Code.gs</b>, then choose Deploy, Manage deployments, Edit, New version, Deploy. The web address stays the same. Until then, <a href="schedule.html?demo=1">try the demo</a> on this computer.</div>
+
+<section class="card budget-top" id="budgetCard">
+  <h2><span class="dot"></span>Labor budget</h2>
+  <div class="ratebox">
+    <div>
+      <label for="payRate">Base pay rate ($/hr)</label>
+      <input id="payRate" type="number" min="0" max="500" step="0.01" value="10.00" inputmode="decimal">
+    </div>
+    <button type="button" class="mini" id="saveRate">Save rate</button>
+  </div>
+  <p id="rateNote" class="rule"></p>
+  <p id="budgetRule" class="rule"></p>
+  <div id="budgetBody"><span class="muted">Loading the saved schedule…</span></div>
 </section>
-<section class="card"><h2><span class="dot"></span>Schedule</h2>
-<label>Week starting (Monday)</label><input type="date" name="week_start" required><div class="q">Posted by Thursday?</div><div class="chips" data-name="posted_by_thu" data-req data-options="Yes|Late|Not yet"></div><div class="q">Named backup for every shift?</div><div class="chips" data-name="backup_every_shift" data-req data-options="Yes|No"></div><label>Open shifts / gaps</label><textarea name="gaps" placeholder=""></textarea>
-</section><section class="card"><h2><span class="dot"></span>Time cards</h2>
-<div class="q">Any time card corrections?</div><div class="chips" data-name="timecard_fixes" data-req data-options="Yes|No"></div><div class="follow" data-if="timecard_fixes=Yes"><label>Who, which day, what changed</label><textarea name="fix_details" placeholder="" required></textarea><div class="q">Approved before payroll?</div><div class="chips" data-name="approved_before_payroll" data-req data-options="Yes|Not yet"></div></div><label>Notes</label><textarea name="notes" placeholder=""></textarea>
+
+<section class="card" id="navCard">
+  <h2><span class="dot"></span>Which dates</h2>
+  <div class="viewtabs">
+    <button type="button" data-view="week">Week</button>
+    <button type="button" data-view="month">Month</button>
+    <button type="button" data-view="year">Year</button>
+    <button type="button" data-view="list">Scheduled list</button>
+  </div>
+  <div class="grid">
+    <div><label for="pickYear">Year</label><select id="pickYear"></select></div>
+    <div><label for="pickMonth">Month</label><select id="pickMonth"></select></div>
+    <div><label for="pickWeek">Week</label><select id="pickWeek"></select></div>
+  </div>
+  <div class="row-btns">
+    <button type="button" class="mini" id="prevBtn">← Previous</button>
+    <button type="button" class="mini" id="todayBtn">Today</button>
+    <button type="button" class="mini" id="nextBtn">Next →</button>
+    <button type="button" class="mini" id="printBtn">Print / PDF</button>
+  </div>
+  <div class="grid">
+    <div><label for="rangeFrom">From</label><input type="date" id="rangeFrom"></div>
+    <div><label for="rangeTo">To</label><input type="date" id="rangeTo"></div>
+  </div>
+  <button type="button" class="mini" id="showRange">Show scheduled list for these dates</button>
+  <p id="periodLabel" class="rule"></p>
+  <details class="help">
+    <summary>How to use this page</summary>
+    <ol class="steps">
+      <li>Choose the year, the month, and the week. Use Previous and Next to move as far ahead or back as you need.</li>
+      <li>On the week, pick a cashier for every shift. On-call 1 and On-call 2 are extra people. Leave them blank when you do not need them.</li>
+      <li>Under the grids, set the manager’s From and To times. That time is salary and stays out of the labor budget.</li>
+      <li>Read the budget at the top. Amber means the store is over the hours you budgeted.</li>
+      <li>Press Save this week. Then use “Use this week for more dates” or “Copy a month” when you want the same pattern again.</li>
+      <li>Month, Year, and Scheduled list show what is already saved.</li>
+    </ol>
+  </details>
 </section>
-<button class="btn" type="submit">Save Schedule Check</button></form>
-<p class="foot">Varsa GROUP LLC · Manager Tools · answers go to the Varsa Cashier Tools sheet</p></div>
+
+<p id="pageMsg" class="rule"></p>
+<div id="viewRoot"><p class="muted">Loading…</p></div>
+<section class="card" id="flagsCard"></section>
+<section class="card" id="hoursCard"></section>
+<p class="foot">Varsa Group LLC · Manager Tools · The Employees tab on the Varsa Cashier Tracker sheet is the employee list. Status must be Active.</p>
+</div>
 <div class="toast" id="toast"></div>
-<script>window.RECENT_COLS=[["week_start", "Week"], ["posted_by_thu", "By Thu"], ["backup_every_shift", "Backups"], ["timecard_fixes", "TC fixes"], ["approved_before_payroll", "Approved"]];</script>
-<script src="config.js"></script><script src="attach.js"></script><script src="app.js"></script>
-</body></html>
+<script src="config.js"></script>
+<script src="mgr.js"></script>
+<script src="schedule.js"></script>
+</body>
+</html>
