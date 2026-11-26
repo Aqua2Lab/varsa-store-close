@@ -17,6 +17,8 @@ https://docs.google.com/spreadsheets/d/1K1bADx_bBnS2_Rfe8keggyUvmtMNxti1NXcagGuL
 Shared files: `config.js` (settings), `styles.css` (look), `app.js` (follow-up questions, validation, sending).
 Follow-up questions appear only when they apply. Questions that stay hidden are saved blank.
 
+The live web app is the script in `manager-tools/Code.gs` (cashier forms, manager tools, expenses, and the staff schedule). If that project is already deployed, paste **that** file when you update the script. Pasting this folder's `Code.gs` over it removes everything added after the original cashier forms.
+
 ## 1. Deploy the Apps Script (one time)
 1. Open the Varsa Cashier Tracker sheet, then go to **Extensions > Apps Script**.
 2. Replace the code with `Code.gs` and save.

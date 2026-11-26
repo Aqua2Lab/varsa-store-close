@@ -359,7 +359,7 @@ function doGet(e) {
   } catch (err) {
     return out_({ ok: false, error: String(err) }, p.callback);
   }
-  return json_({ ok: true, app: 'Varsa Cashier Tracker', forms: Object.keys(SCHEMA), time: new Date().toISOString() });
+  return json_({ ok: true, app: 'Varsa Cashier Tracker', forms: Object.keys(SCHEMA), schedule: true, time: new Date().toISOString() });
 }
 
 function readRows_(spec, store, n) {

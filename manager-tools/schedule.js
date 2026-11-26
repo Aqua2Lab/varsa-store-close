@@ -38,7 +38,7 @@
     var s = toMin(start), e = toMin(end);
     if (s == null || e == null) return 0;
     var d = e - s;
-    if (d <= 0) d += 1440;
+    if (d < 0) d += 1440;
     return d;
   }
   function shiftHours(start, end) { return minutesBetween(start, end) / 60; }
@@ -163,6 +163,7 @@
     findConflicts: findConflicts, weeksTouching: weeksTouching, monthIndex: monthIndex, sourceDateFor: sourceDateFor,
     isOnCallName: isOnCallName, fmtH: fmtH, fmtMoney: fmtMoney, intervalMs: intervalMs
   };
+  if (typeof module !== 'undefined' && module.exports) module.exports = root.VARSA_SCHED;
 
   if (!root.document) return;
 
