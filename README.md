@@ -9,7 +9,7 @@ Varsa Group LLC nightly store close form and Manager Tools.
 
 The home page and the Manager Tools index ask for a PIN. This is a convenience gate on a static site, not real security. The pages, the link list, and the hash file are all public. Anyone who knows a page address can still open it. The nightly store close and the cashier tool pages do not ask for a PIN.
 
-The PINs are not stored. `auth-config.js` holds a salt and a SHA-256 hash for the manager and for the cashier. The hashes in the repo are placeholders, so no PIN works until you replace them.
+The PINs are not stored. `auth-config.js` holds a salt and a SHA-256 hash for the manager and for the cashier.
 
 A hash is SHA-256 of the UTF-8 text `salt + ":" + pin`. Generate a pair with a 4 to 8 digit PIN:
 
