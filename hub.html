@@ -39,6 +39,10 @@ body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;colo
 .badge{display:inline-block;margin-top:8px;font-size:.68rem;font-weight:750;letter-spacing:.04em;text-transform:uppercase;color:var(--navy);background:#e7ebf0;border-radius:999px;padding:5px 8px}
 .empty{padding:18px;text-align:center;color:var(--muted);background:#fff;border:1px solid var(--line);border-radius:16px}
 .foot{text-align:center;color:var(--muted);font-size:.8rem;margin-top:22px}
+.hero .top{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.logout{background:transparent;color:#fff;border:1px solid #ffffff80;border-radius:999px;padding:8px 14px;font:inherit;font-weight:700}
+.logout:active{transform:scale(.98)}
+[hidden]{display:none !important}
 @media(min-width:800px){
   .hero h1{font-size:2rem}
   .cards{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -46,9 +50,10 @@ body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;colo
 </style>
 </head>
 <body>
-<div class="wrap">
+<div id="gate"></div>
+<div class="wrap" id="app" hidden>
 <header class="hero">
-<p class="brand">Varsa Group</p>
+<div class="top"><p class="brand">Varsa Group</p><button type="button" id="logout" class="logout">Log out</button></div>
 <h1>Varsa Group</h1>
 <p>Thomasville Chevron and Thomasville Outrun. Apps, sheets, forms, docs, and folders in one place.</p>
 </header>
@@ -75,6 +80,8 @@ body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;colo
 <main id="list"></main>
 <p class="foot">Varsa Group · Thomasville Chevron &amp; Thomasville Outrun</p>
 </div>
+<script src="auth-config.js"></script>
+<script src="auth.js"></script>
 <script src="links.js"></script>
 <script>
 const ICONS = {
@@ -86,11 +93,13 @@ const ICONS = {
   Repo: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 8l-4 4 4 4M16 8l4 4-4 4M13 6l-2 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>'
 };
 const ROLE_LABEL = { manager: "Managers", cashier: "Cashiers", both: "Everyone" };
-const state = { q: "", role: "all", type: "" };
+const state = { q: "", role: "all", type: "", sessionRole: "" };
 const $ = id => document.getElementById(id);
 
 function matches(item) {
-  if (state.role !== "all" && item.role !== state.role && item.role !== "both") return false;
+  const who = state.sessionRole === "cashier" ? "cashier" : state.role;
+  if (who === "cashier" && item.roles.indexOf("cashier") === -1) return false;
+  if (who === "manager" && item.roles.indexOf("manager") === -1) return false;
   if (state.type && item.type !== state.type) return false;
   if (!state.q) return true;
   const hay = (item.name + " " + item.description + " " + item.category + " " + item.type).toLowerCase();
@@ -140,7 +149,10 @@ function render() {
       section.append(h2);
       if (cat.id === "daily") {
         ["manager", "cashier"].forEach(role => {
-          const groupRows = rows.filter(item => item.role === role);
+          const groupRows = rows.filter(item => {
+            const forCashier = item.roles.indexOf("cashier") !== -1;
+            return role === "cashier" ? forCashier : !forCashier;
+          });
           if (!groupRows.length) return;
           const h3 = document.createElement("h3");
           h3.className = "group";
@@ -159,7 +171,8 @@ function render() {
       list.append(section);
     });
   }
-  $("count").textContent = shown.length + " of " + VARSA_LINKS.length + " links";
+  const total = state.sessionRole === "cashier" ? VARSA_LINKS.filter(item => item.roles.indexOf("cashier") !== -1).length : VARSA_LINKS.length;
+  $("count").textContent = shown.length + " of " + total + " links";
   document.querySelectorAll("#jumps a").forEach(a => {
     const id = a.getAttribute("href").slice(1);
     const visible = shown.some(item => VARSA_CATEGORIES.find(c => c.id === id && c.name === item.category));
@@ -194,7 +207,27 @@ VARSA_CATEGORIES.forEach(cat => {
   a.textContent = cat.name.replace(" & ", " & ").replace("Vendors, Invoices & Payments", "Vendors").replace("Inventory & Supplies", "Inventory").replace("Scheduling & Time", "Schedule").replace("Onboarding & HR", "HR").replace("Daily Store Ops", "Store ops").replace("Drive Folders", "Drive");
   jumps.append(a);
 });
-render();
+
+function showHub(role) {
+  if ($("gate")._varsaOff) $("gate")._varsaOff();
+  state.sessionRole = role;
+  $("gate").hidden = true;
+  $("app").hidden = false;
+  $("roles").hidden = role === "cashier";
+  if (role === "cashier") state.role = "cashier";
+  render();
+}
+function showGate() {
+  if ($("gate")._varsaOff) $("gate")._varsaOff();
+  state.sessionRole = "";
+  $("app").hidden = true;
+  $("gate").hidden = false;
+  VarsaAuth.mount($("gate"), { allowed: ["manager", "cashier"], onSuccess: showHub });
+}
+$("logout").addEventListener("click", () => { VarsaAuth.logout(); showGate(); });
+const existing = VarsaAuth.session();
+if (existing) showHub(existing.role);
+else showGate();
 </script>
 </body>
 </html>
