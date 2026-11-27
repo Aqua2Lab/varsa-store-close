@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Varsa Group Apps</title>
+<link rel="stylesheet" href="manager-tools/styles.css">
+<style>
+:root{--a1:#1F2A44;--a2:#0f766e;--ink:#1F2A44;--muted:#5b6b7c;--bg:#eef2f5}
+body{background:
+ radial-gradient(900px 480px at -10% -10%,#1F2A4422,transparent 60%),
+ radial-gradient(800px 420px at 110% 0%,#0f766e24,transparent 55%),
+ var(--bg)}
+.hero{background:linear-gradient(135deg,#1F2A44,#1a6b78 70%,#0f766e)}
+.roles{display:flex;flex-direction:column;gap:12px;margin-top:16px}
+.role{display:flex;align-items:center;justify-content:center;text-align:center;min-height:92px;padding:20px 16px;border-radius:22px;color:#fff;text-decoration:none;font-weight:800;font-size:1.28rem;line-height:1.25;box-shadow:0 16px 30px -18px #1F2A44}
+.role:active{transform:scale(.98)}
+.role.mgr{background:linear-gradient(135deg,#1F2A44,#2c5282)}
+.role.cash{background:linear-gradient(135deg,#0f766e,#2563eb)}
+.sect{scroll-margin-top:12px}
+.apps{display:flex;flex-direction:column;gap:10px}
+.app{display:flex;gap:12px;align-items:flex-start;padding:14px;border-radius:18px;background:#fff;text-decoration:none;color:var(--ink);border:1px solid #e2e8f0;box-shadow:0 10px 22px -16px #1F2A44}
+.app:active{transform:scale(.99)}
+.app .ic{width:48px;height:48px;border-radius:14px;display:grid;place-items:center;font-size:1.45rem;background:#e7eef3;flex:none}
+.app b{display:block;font-size:1.02rem;font-weight:700;color:var(--ink)}
+.app span span{display:block;color:var(--muted);font-size:.88rem;font-weight:500;margin-top:2px;line-height:1.35}
+.topnote{margin:8px 2px 0;color:var(--muted);font-size:.9rem}
+.topnote a{color:#0f766e;font-weight:700}
+</style>
+</head>
+<body>
+<div class="wrap" id="top">
+<header class="hero">
+<div class="top"><span class="brand">Varsa Group LLC</span><span class="brand">Thomasville</span></div>
+<h1>Varsa Group Apps</h1>
+<p>Thomasville Chevron and Thomasville OutRun. Pick your role, then open a tool.</p>
+</header>
+
+<nav class="roles" aria-label="Choose a role">
+<a class="role mgr" href="#managers">Managers, please click here</a>
+<a class="role cash" href="#cashiers">Cashiers, please click here</a>
+</nav>
+<p class="topnote">Every tool below opens the page it already uses. Old links keep working.</p>
+
+<section class="card sect" id="managers">
+<h2><span class="dot"></span>Managers</h2>
+<p class="topnote">Reports, invoices, audits, expenses, and the schedule.</p>
+<nav class="apps">
+<a class="app" href="manager-tools/store_close.html"><span class="ic">🧾</span><span><b>Store Close Report</b><span>Read-only nightly close totals, short or over, and the month.</span></span></a>
+<a class="app" href="manager-tools/morning_count.html"><span class="ic">💰</span><span><b>Morning Cash Count</b><span>Safe, night drop, and till closes by 10 AM.</span></span></a>
+<a class="app" href="manager-tools/invoice_upload.html"><span class="ic">📑</span><span><b>Invoice Upload</b><span>Scan a vendor invoice into Drive and the invoices log.</span></span></a>
+<a class="app" href="manager-tools/delivery_intake.html"><span class="ic">🚚</span><span><b>Delivery Intake</b><span>Check the invoice while the vendor rep is still here.</span></span></a>
+<a class="app" href="manager-tools/check_upload.html"><span class="ic">🏦</span><span><b>Check Upload</b><span>Photo of a vendor check, with the amount and invoice it pays.</span></span></a>
+<a class="app" href="manager-tools/expenses.html"><span class="ic">💵</span><span><b>Expenses</b><span>Non-vendor cash out, with a photo or a bill note.</span></span></a>
+<a class="app" href="manager-tools/store_visit.html"><span class="ic">🏪</span><span><b>Store Visit Audit</b><span>Weekly visit notes for each store.</span></span></a>
+<a class="app" href="manager-tools/shelf_audit.html"><span class="ic">🧃</span><span><b>Shelf &amp; Stock Audit</b><span>Gaps, expired items, facing, and what to order.</span></span></a>
+<a class="app" href="manager-tools/price_tag_audit.html"><span class="ic">🏷️</span><span><b>Price Tag Audit</b><span>Missing price tags put up within 48 hours.</span></span></a>
+<a class="app" href="manager-tools/post_audit.html"><span class="ic">📸</span><span><b>Cashier Post Audit</b><span>Did each shift post washroom, trash, till, and task photos?</span></span></a>
+<a class="app" href="manager-tools/night_audit.html"><span class="ic">🎥</span><span><b>Night Shift Audit</b><span>Camera check of last night, done by 10 AM.</span></span></a>
+<a class="app" href="manager-tools/cashier_activity.html"><span class="ic">👀</span><span><b>Cashier Activity</b><span>Latest cashier entries that need a look.</span></span></a>
+<a class="app" href="manager-tools/todays_plan.html"><span class="ic">🗓️</span><span><b>Today's Plan</b><span>Shift tasks posted in the group by 9:00 AM.</span></span></a>
+<a class="app" href="manager-tools/shift_check.html"><span class="ic">📋</span><span><b>ESM Shift Check</b><span>Daily group check-in, then copy it to the group.</span></span></a>
+<a class="app" href="manager-tools/schedule.html"><span class="ic">📅</span><span><b>Staff Schedule</b><span>Plan any week, month, or year, with the labor budget.</span></span></a>
+<a class="app" href="manager-tools/schedule_view.html"><span class="ic">📱</span><span><b>My Schedule</b><span>One person's shifts on their phone. Add their name to the link.</span></span></a>
+</nav>
+<p class="topnote"><a href="#top">Back to the top</a></p>
+</section>
+
+<section class="card sect" id="cashiers">
+<h2><span class="dot"></span>Cashiers</h2>
+<p class="topnote">Store close, scans, supplies, and the start and end of a shift.</p>
+<nav class="apps">
+<a class="app" href="index.html"><span class="ic">🌙</span><span><b>Nightly Store Close</b><span>Fill the close from the Ruby2 store close report.</span></span></a>
+<a class="app" href="cashier-tools/product_issue.html"><span class="ic">🏷️</span><span><b>Product Issue / Low Stock</b><span>Won't scan, missing or wrong price, a deal, or low stock.</span></span></a>
+<a class="app" href="cashier-tools/supply_request.html"><span class="ic">🧻</span><span><b>Supply Request</b><span>Bags, bands, cleaning supplies, and receipt paper.</span></span></a>
+<a class="app" href="cashier-tools/void_nosale.html"><span class="ic">🧾</span><span><b>Void / No-Sale</b><span>Log a void or drawer open, with a photo of the slip.</span></span></a>
+<a class="app" href="cashier-tools/till_close.html"><span class="ic">💵</span><span><b>Till Close</b><span>End of every shift. This is a till close, not a store close.</span></span></a>
+<a class="app" href="cashier-tools/shift_checklist.html"><span class="ic">✅</span><span><b>Start of Shift</b><span>Till at $300, trash, washroom, and the first tasks.</span></span></a>
+<a class="app" href="cashier-tools/fuel_price.html"><span class="ic">⛽</span><span><b>Fuel Price Change</b><span>Update the sign and the pumps, then photo the sign.</span></span></a>
+</nav>
+<p class="topnote"><a href="#top">Back to the top</a></p>
+</section>
+
+<p class="foot">Varsa Group LLC · Thomasville Chevron &amp; OutRun</p>
+</div>
+</body>
+</html>
