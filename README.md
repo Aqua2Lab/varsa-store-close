@@ -2,7 +2,22 @@
 
 Varsa Group LLC nightly store close form and Manager Tools.
 
+- Home (PIN gate): https://aqua2lab.github.io/varsa-store-close/hub.html
 - Manager Tools: https://aqua2lab.github.io/varsa-store-close/manager-tools/
+
+## Home page PIN
+
+The home page and the Manager Tools index ask for a PIN. This is a convenience gate on a static site, not real security. The pages, the link list, and the hash file are all public. Anyone who knows a page address can still open it. The nightly store close and the cashier tool pages do not ask for a PIN.
+
+The PINs are not stored. `auth-config.js` holds a salt and a SHA-256 hash for the manager and for the cashier.
+
+A hash is SHA-256 of the UTF-8 text `salt + ":" + pin`. Generate a pair with a 4 to 8 digit PIN:
+
+```
+node scripts/pin-hash.js 1234
+```
+
+`1234` in that example is only the shape of the command. Paste the printed `salt` and `hash` into `auth-config.js` under `manager` or `cashier`. Do not commit the PIN. The manager PIN shows every link. The cashier PIN shows cashier tools, till close, nightly store close, the cashier handbook, and My Schedule. A login is remembered on that browser for 12 hours. Log out clears it. Five wrong tries pause the keypad for 60 seconds.
 - Staff schedule: https://aqua2lab.github.io/varsa-store-close/manager-tools/schedule.html
 - Employee view (one person, phone): https://aqua2lab.github.io/varsa-store-close/manager-tools/schedule_view.html?name=
 

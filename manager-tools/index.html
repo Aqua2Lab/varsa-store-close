@@ -10,9 +10,13 @@
 .tile .ic{font-size:1.7rem}.tile b{font-size:1.1rem;font-weight:800}.tile span{opacity:.95;font-size:.85rem}
 .sect{margin:22px 4px 0;font-weight:800;color:var(--ink);font-size:1rem;display:flex;gap:8px;align-items:center}
 .sect small{font-weight:500;color:var(--muted)}
-</style></head><body><div class="wrap">
+.hubback{display:flex;align-items:center;justify-content:center;margin-top:16px;padding:14px 16px;border-radius:16px;background:#1F2A44;color:#fff;text-decoration:none;font-weight:800;font-size:1.05rem}
+.hubback:active{transform:scale(.98)}
+</style></head><body><div id="gate"></div><div class="wrap" hidden>
 <header class="hero"><div class="top"><span class="brand">Varsa GROUP LLC</span><span class="brand" id="clock"></span></div>
 <h1><span class="emo">🧭</span>Manager Tools</h1><p>Thomasville Chevron &amp; OutRun · reports, audits and daily checks for Varun, Sanchari and Jonathan</p></header>
+<a class="hubback" href="../hub.html">← Varsa Group Home</a>
+<button type="button" id="mgrLogout" class="hubback" style="border:0;cursor:pointer;background:#5c6773">Log out</button>
 
 <div class="sect">🧾 Store Close / Sales <small>nightly close &amp; sales</small></div>
 <nav class="tiles">
@@ -71,5 +75,15 @@
 </nav>
 
 <p class="foot">Varsa GROUP LLC · Manager Tools · times are targets</p></div>
-<script>const c=()=>document.getElementById('clock').textContent=new Date().toLocaleString([], {weekday:'short',hour:'numeric',minute:'2-digit'});c();setInterval(c,30000);</script>
+<script src="../auth-config.js"></script>
+<script src="../auth.js"></script>
+<script>
+const c=()=>document.getElementById('clock').textContent=new Date().toLocaleString([], {weekday:'short',hour:'numeric',minute:'2-digit'});c();setInterval(c,30000);
+const tools=document.querySelector('.wrap');
+function openTools(){ if(document.getElementById('gate')._varsaOff) document.getElementById('gate')._varsaOff(); document.getElementById('gate').hidden=true; tools.hidden=false; }
+document.getElementById('mgrLogout').addEventListener('click',()=>{ VarsaAuth.logout(); location.reload(); });
+const session=VarsaAuth.session();
+if(session && session.role==='manager') openTools();
+else VarsaAuth.mount(document.getElementById('gate'), { allowed:['manager'], onSuccess: openTools });
+</script>
 </body></html>

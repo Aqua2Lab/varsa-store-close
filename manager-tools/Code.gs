@@ -14,6 +14,12 @@
  * Deploy > Manage deployments > Edit (pencil) > Version: New version > Deploy.
  * Do not create a second web app. config.js already has the /exec URL.
  * New tabs on this sheet: Employees, Schedule_Shifts, Schedule_Manager, Schedule_Settings.
+ *
+ * Invoice Upload, Check Upload, Item Issues, and Voids read and write
+ * "Varsa Invoices & Checks Log" (DOCS_LOG_ID). The pages call
+ * ?docs=invoice&limit=50&callback= so the reply must be JSONP, not the catalog JSON.
+ * After pasting this file, Deploy > Manage deployments > Edit > New version.
+ * Reload the /exec URL. The JSON includes "docs": true when this version is live.
  */
 const SHEET_ID = '1K1bADx_bBnS2_Rfe8keggyUvmtMNxti1NXcagGuLJ3U';
 
@@ -298,6 +304,8 @@ function doPost(e) {
   try {
     lock.waitLock(20000);
     const data = JSON.parse((e && e.postData && e.postData.contents) || '{}');
+    if (data.form === 'doc') return json_(docsSave_(data));
+    if (data.form === 'doc_comment') return json_(docsComment_(data));
     if (data.form === 'expense') return json_(expense_(data));
     if (data.form === 'schedule_save' || data.form === 'schedule_settings') return json_(schedulePost_(data));
     const spec = SCHEMA[data.form];
@@ -332,6 +340,7 @@ function doPost(e) {
 // ?action=employees&callback=   active employees (name, role, home_store) + base pay rate
 // ?action=schedule&from=&to=&callback=   saved shifts and manager rows in a date range
 // ?action=myschedule&name=&from=&to=&callback=   one person's rows (phone view, no PIN)
+// ?docs=invoice|check|item_issue|void_ns&store=&limit=&id=&callback=   Invoices & Checks Log, JSONP
 // Optional: set Script Property MANAGER_PIN to require &pin= on the manager reads and schedule saves.
 // myschedule stays open so a cashier can open their phone link.
 const STORE_CLOSE_ID = '149QWdotKvCoGT3gUosi_-oqPSdMeqT3tKH6yI5UE548'; // "Varsa Store Close Log" (read only)
@@ -340,6 +349,7 @@ const CASHIER_FORMS = ['till_close', 'product_issue', 'supply_request', 'low_sto
 function doGet(e) {
   const p = (e && e.parameter) || {};
   try {
+    if (p.docs) return out_(docsGet_(p), p.callback);
     if (p.action === 'employees' || p.action === 'schedule' || p.action === 'myschedule') return scheduleGet_(p);
     if (p.action === 'storeclose' || p.action === 'activity') {
       const pin = PropertiesService.getScriptProperties().getProperty('MANAGER_PIN');
@@ -359,7 +369,7 @@ function doGet(e) {
   } catch (err) {
     return out_({ ok: false, error: String(err) }, p.callback);
   }
-  return json_({ ok: true, app: 'Varsa Cashier Tracker', forms: Object.keys(SCHEMA), schedule: true, time: new Date().toISOString() });
+  return json_({ ok: true, app: 'Varsa Cashier Tracker', forms: Object.keys(SCHEMA), schedule: true, docs: true, time: new Date().toISOString() });
 }
 
 function readRows_(spec, store, n) {
@@ -437,6 +447,171 @@ function testPost() {
 
 function json_(o) {
   return ContentService.createTextOutput(JSON.stringify(o)).setMimeType(ContentService.MimeType.JSON);
+}
+
+
+// ===== Invoices & Checks Log =====
+// Invoice Upload, Check Upload, Product Issue, and Void / No-Sale call
+// ?docs=<kind>&limit=&store=&id=&callback= and expect JSONP {ok:true, rows:[...]}.
+// Rows live in "Varsa Invoices & Checks Log", not the Cashier Tracker sheet.
+// Files go to Drive › Varsa Group LLC › <folder>. Column order matches the sheet.
+const DOCS_LOG_ID = '19GLxvBXecQKYmpYC83m0F0JAAI8w7YGfZRml0WAXiu0';
+const DOCS_PARENT_FOLDER_ID = '1ReqBmblNlJmxpU0_jbLxrNEJEu8w4xAt'; // Drive › Varsa Group LLC
+const DOCS = {
+  invoice: {
+    tab: 'Invoices', folder: 'Invoices', who: 'uploaded_by',
+    keys: ['_ts', '_id', 'store', 'uploaded_by', 'billed_to', 'vendor', 'invoice_no', 'invoice_date', 'due_date', 'subtotal', 'tax', 'total', 'terms', 'details_ok', 'missing', '_file', '_comments', '_status', 'category', 'reimburse', 'reimburse_to', 'paid_with', '_reimb_status']
+  },
+  check: {
+    tab: 'Checks', folder: 'Checks', who: 'issued_by',
+    keys: ['_ts', '_id', 'store', 'issued_by', 'check_no', 'check_date', 'amount', 'vendor', 'vendor_phone', 'invoice_no', '_file', '_comments', '_status']
+  },
+  item_issue: {
+    tab: 'Item Issues', folder: 'Item Issues', who: 'cashier',
+    keys: ['_ts', '_id', 'store', 'cashier', 'problem', 'item', 'upc', 'location', 'shelf_price', '_file', '_comments', '_status', 'qty_on_hand', 'vendor', 'urgency']
+  },
+  void_ns: {
+    tab: 'Voids & No-Sales', folder: 'Voids & No-Sales', who: 'cashier',
+    keys: ['_ts', '_id', 'store', 'cashier', 'type', 'reason', 'slip_phone', 'slip_time', '_file', '_comments', '_status']
+  }
+};
+const DOCS_TEXT_KEYS = { invoice_no: 1, upc: 1, check_no: 1 };
+const DOCS_NUM_KEYS = { subtotal: 1, tax: 1, total: 1, amount: 1, shelf_price: 1, qty_on_hand: 1 };
+
+function docsGet_(p) {
+  const spec = DOCS[p.docs];
+  if (!spec) return { ok: false, error: 'Unknown log' };
+  const sh = SpreadsheetApp.openById(DOCS_LOG_ID).getSheetByName(spec.tab);
+  if (!sh || sh.getLastRow() < 2) return { ok: true, docs: p.docs, rows: [] };
+  const last = sh.getLastRow();
+  const width = spec.keys.length;
+  let rows = sh.getRange(2, 1, last - 1, width).getDisplayValues().map(function (r) {
+    const o = {};
+    spec.keys.forEach(function (k, i) { o[k] = r[i] == null ? '' : String(r[i]).replace(/^'/, ''); });
+    return o;
+  }).filter(function (o) { return o._id; });
+  if (p.id) rows = rows.filter(function (o) { return o._id === String(p.id); });
+  else if (p.store) rows = rows.filter(function (o) { return o.store === String(p.store); });
+  rows.reverse();
+  const n = Math.min(parseInt(p.limit, 10) || 50, 500);
+  return { ok: true, docs: p.docs, rows: rows.slice(0, n) };
+}
+
+function docsTz_() {
+  return SpreadsheetApp.openById(DOCS_LOG_ID).getSpreadsheetTimeZone() || Session.getScriptTimeZone() || 'America/Chicago';
+}
+function docsTab_(spec) {
+  const sh = SpreadsheetApp.openById(DOCS_LOG_ID).getSheetByName(spec.tab);
+  if (!sh) throw new Error(spec.tab + ' tab not found');
+  return sh;
+}
+function docsClean_(v) {
+  v = String(v == null ? '' : v).trim();
+  if (!v) return '';
+  return (/^[=+\-@]/.test(v) && !/^-?\d/.test(v)) ? "'" + v : v;
+}
+function docsLine_(by, text, tz) {
+  return '[' + Utilities.formatDate(new Date(), tz, 'M/d h:mm a') + '] ' + by + ': ' + text;
+}
+function docsCommentLog_(tab, id, by, text, tz, token) {
+  const ss = SpreadsheetApp.openById(DOCS_LOG_ID);
+  let sh = ss.getSheetByName('Comments');
+  if (!sh) {
+    sh = ss.insertSheet('Comments');
+    sh.getRange(1, 1, 1, 5).setValues([['Timestamp', 'Log', 'Entry ID', 'By', 'Comment']]).setFontWeight('bold');
+    sh.setFrozenRows(1);
+  }
+  const note = token ? text + ' {t' + Utilities.formatDate(new Date(), 'GMT', 'yyyyMMddHHmmss') + '}' : text;
+  sh.appendRow([new Date(), tab, id, by, docsClean_(note)]);
+}
+function docsFolder_(name) {
+  const parent = DriveApp.getFolderById(DOCS_PARENT_FOLDER_ID);
+  const it = parent.getFoldersByName(name);
+  return it.hasNext() ? it.next() : parent.createFolder(name);
+}
+function docsFileName_(d, index, count, ext) {
+  const store = String(d.store || '').replace(/^Thomasville\s+/, '');
+  const cat = String(d.category || '').replace(/\s*\/\s*/g, ' - ');
+  const when = String(d.invoice_date || d.check_date || d.slip_time || '').slice(0, 10);
+  const bits = [when, store, cat, d.vendor || d.item || '', d.invoice_no || d.check_no || '', d.id];
+  let name = bits.map(function (x) { return String(x || '').trim(); }).filter(Boolean).join(' ');
+  name = name.replace(/[\\/:*?"<>|]/g, ' ').replace(/\s+/g, ' ').trim();
+  if (count > 1) name += ' p' + (index + 1);
+  if (name.length > 160) name = name.slice(0, 160).trim();
+  return name + ext;
+}
+function docsStoreFiles_(spec, d) {
+  const files = Array.isArray(d.files) ? d.files.slice(0, 10) : [];
+  if (!files.length) return [];
+  const folder = docsFolder_(spec.folder);
+  const links = [];
+  files.forEach(function (f, i) {
+    if (!f || !f.data || !/^(image\/(jpeg|png|webp)|application\/pdf)$/.test(String(f.mime || ''))) return;
+    const bytes = Utilities.base64Decode(String(f.data));
+    if (!bytes || bytes.length > 15 * 1024 * 1024) return;
+    const ext = f.mime === 'application/pdf' ? '.pdf' : f.mime === 'image/png' ? '.png' : f.mime === 'image/webp' ? '.webp' : '.jpg';
+    const file = folder.createFile(Utilities.newBlob(bytes, f.mime, docsFileName_(d, i, files.length, ext)));
+    try { file.setDescription([d.id, spec.tab, d.store].filter(Boolean).join(' | ')); } catch (err) {}
+    links.push(file.getUrl());
+  });
+  return links;
+}
+function docsCell_(k, d, links, commentCell) {
+  if (k === '_ts') return new Date();
+  if (k === '_id') return docsClean_(d.id);
+  if (k === '_file') return links.join('\n');
+  if (k === '_comments') return commentCell;
+  if (k === '_status') return 'Open';
+  if (k === '_reimb_status') return d.reimburse === 'Yes' ? 'Pending' : 'N/A';
+  let v = d[k];
+  if (v == null) return '';
+  v = String(v).trim();
+  if (!v) return '';
+  if (DOCS_TEXT_KEYS[k]) return "'" + v.replace(/^'/, '');
+  if (/^[=+\-@]/.test(v) && !/^-?\d/.test(v)) return "'" + v;
+  if (DOCS_NUM_KEYS[k] && /^-?\d+(\.\d+)?$/.test(v)) return Number(v);
+  return v;
+}
+function docsSave_(d) {
+  const spec = DOCS[d.kind];
+  if (!spec) return { ok: false, error: 'Unknown log' };
+  const id = String(d.id || '').trim();
+  if (!/^([A-Z]{3})-\d{8}-\d{6}-\d{4}$/.test(id)) return { ok: false, error: 'Bad id' };
+  const tz = docsTz_();
+  const by = docsClean_(d[spec.who] || '');
+  const text = String(d.comment || '').trim();
+  const links = docsStoreFiles_(spec, d);
+  const commentCell = text ? docsLine_(by, text, tz) : '';
+  if (text) docsCommentLog_(spec.tab, id, by, text, tz, false);
+  const sh = docsTab_(spec);
+  sh.appendRow(spec.keys.map(function (k) { return docsCell_(k, d, links, commentCell); }));
+  return { ok: true, id: id, row: sh.getLastRow() };
+}
+function docsComment_(d) {
+  const spec = DOCS[d.kind];
+  if (!spec) return { ok: false, error: 'Unknown log' };
+  const id = String(d.id || '').trim();
+  const by = docsClean_(d.by);
+  const text = String(d.comment || '').trim();
+  if (!id || !by || !text) return { ok: false, error: 'Name and comment are required' };
+  const sh = docsTab_(spec);
+  const last = sh.getLastRow();
+  const idCol = spec.keys.indexOf('_id') + 1;
+  const comCol = spec.keys.indexOf('_comments') + 1;
+  let found = 0;
+  if (last >= 2) {
+    const ids = sh.getRange(2, idCol, last - 1, 1).getDisplayValues();
+    for (let i = ids.length - 1; i >= 0; i--) {
+      if (String(ids[i][0]).replace(/^'/, '') === id) { found = i + 2; break; }
+    }
+  }
+  if (!found) return { ok: false, error: 'Entry not found' };
+  const tz = docsTz_();
+  const prev = String(sh.getRange(found, comCol).getValue() || '');
+  const line = docsLine_(by, text, tz);
+  sh.getRange(found, comCol).setValue(prev ? prev + '\n' + line : line);
+  docsCommentLog_(spec.tab, id, by, text, tz, true);
+  return { ok: true, id: id };
 }
 
 

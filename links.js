@@ -1,0 +1,109 @@
+/* Varsa Group home links. Add an item here to show it on hub.html.
+   Types: App, Sheet, Form, Doc, Folder, Repo.
+   roles lists who may see the link after the PIN screen.
+   The manager PIN shows every link. The cashier PIN shows only links that include "cashier".
+   Do not put passwords in this file. */
+const VARSA_CATEGORIES = [
+  {
+    id: "onboarding",
+    name: "Onboarding & HR"
+  },
+  {
+    id: "scheduling",
+    name: "Scheduling & Time"
+  },
+  {
+    id: "daily",
+    name: "Daily Store Ops"
+  },
+  {
+    id: "vendors",
+    name: "Vendors, Invoices & Payments"
+  },
+  {
+    id: "inventory",
+    name: "Inventory & Supplies"
+  },
+  {
+    id: "drive",
+    name: "Drive Folders"
+  },
+  {
+    id: "github",
+    name: "GitHub"
+  }
+];
+
+const VARSA_LINKS = [
+  {"category":"Onboarding & HR","roles":["manager"],"type":"Sheet","name":"New-hire checklist","description":"Steps for bringing on a new employee.","url":"https://docs.google.com/spreadsheets/d/1_yrUfNRK3D6KFkSdrbfO8btCMYWs9CKbDgpQEUBf0IQ/edit"},
+  {"category":"Onboarding & HR","roles":["manager"],"type":"App","name":"Employee Onboarding W-4/I-9","description":"New hire fills out the W-4 and I-9.","url":"https://aqua2lab.github.io/barcode-scanner/onboarding.html"},
+  {"category":"Onboarding & HR","roles":["manager"],"type":"Sheet","name":"Onboarding Responses","description":"Answers submitted from employee onboarding.","url":"https://docs.google.com/spreadsheets/d/1zoeWYCrc2ctXqjKpqXlzoYR_d7p16Cfqbv6gIi0n2ok/edit"},
+  {"category":"Onboarding & HR","roles":["manager"],"type":"App","name":"Employee Direct Deposit","description":"Employee enters direct deposit details.","url":"https://aqua2lab.github.io/barcode-scanner/directdeposit.html"},
+  {"category":"Onboarding & HR","roles":["manager"],"type":"Sheet","name":"Direct Deposit Submissions","description":"Direct deposit details that were submitted.","url":"https://docs.google.com/spreadsheets/d/1tr_CC-uHnh9A283M_WU4MqrTRBMGTEqjh1i4gNMg5Vo/edit"},
+  {"category":"Onboarding & HR","roles":["manager"],"type":"Sheet","name":"Employee Database","description":"Employee list for both stores.","url":"https://docs.google.com/spreadsheets/d/10hCNWA-4w5rOBXqOB8X9iZ__ZqaL3_mhm8lfF8SIYqQ/edit"},
+  {"category":"Onboarding & HR","roles":["manager"],"type":"Form","name":"Cashier Application form","description":"Application for a cashier job.","url":"https://docs.google.com/forms/d/1ozJbScd4BlTpChnMp9fbuUHYfb-OIRlVkhH-pD3Dm2o/viewform"},
+  {"category":"Onboarding & HR","roles":["manager"],"type":"Sheet","name":"Cashier Applications sheet","description":"Applications that have been submitted.","url":"https://docs.google.com/spreadsheets/d/1b0NZSbgFIF40AszyFoCSouiFPDNIo0q1AFbLlyPaR80/edit"},
+  {"category":"Onboarding & HR","roles":["manager","cashier"],"type":"Doc","name":"Cashier Employee Handbook","description":"Handbook for cashiers at both stores.","url":"https://docs.google.com/document/d/1vQjqLjGieR6AYwnJVMOlK54bCtEt9f-bYu_75o4cCnY/edit"},
+  {"category":"Onboarding & HR","roles":["manager"],"type":"Doc","name":"Operations Handbook","description":"How Thomasville Chevron and Thomasville Outrun are run.","url":"https://docs.google.com/document/d/1h4xibabx1yMGf-DAJDzn0Q8QHPzYrlMDX5mEtY6U4is/edit"},
+  {"category":"Onboarding & HR","roles":["manager"],"type":"Doc","name":"HR Policies","description":"Company HR policies.","url":"https://docs.google.com/document/d/1agAcso7Buhjm1heCJucthVaQy2gSTmcU2YpkIdI8mQ4/edit"},
+  {"category":"Onboarding & HR","roles":["manager"],"type":"Sheet","name":"Jonathan Task Tracker","description":"Jonathan's open tasks.","url":"https://docs.google.com/spreadsheets/d/1unA7uwYMcRFrTvYAQVTWlFvJ7A3tQdFBcebMZi4xY9g/edit"},
+
+  {"category":"Scheduling & Time","roles":["manager"],"type":"App","name":"Staff Schedule","description":"Plan any week, month, or year, with the labor budget.","url":"https://aqua2lab.github.io/varsa-store-close/manager-tools/schedule.html"},
+  {"category":"Scheduling & Time","roles":["manager","cashier"],"type":"App","name":"My Schedule","description":"One person's shifts on their phone.","url":"https://aqua2lab.github.io/varsa-store-close/manager-tools/schedule_view.html"},
+  {"category":"Scheduling & Time","roles":["manager"],"type":"Sheet","name":"Shift Template","description":"Template for building the store shifts.","url":"https://docs.google.com/spreadsheets/d/1ByOEeumLqKFy73MbAuOWi5vsybsTPYTNEjsXDu1eyR0/edit"},
+  {"category":"Scheduling & Time","roles":["manager"],"type":"Sheet","name":"NGTeco Time Records","description":"Clock-in records from the time clock.","url":"https://docs.google.com/spreadsheets/d/1fPMn3TotkZ_IiJKi7u8vYT9kmTM29NFbEzyWIjUWaqw/edit"},
+
+  {"category":"Daily Store Ops","roles":["manager"],"type":"App","name":"Manager Tools","description":"Reports, audits, and daily checks.","url":"https://aqua2lab.github.io/varsa-store-close/manager-tools/"},
+  {"category":"Daily Store Ops","roles":["manager"],"type":"App","name":"Store Close Report","description":"Read-only nightly close totals, short or over, and the month.","url":"https://aqua2lab.github.io/varsa-store-close/manager-tools/store_close.html"},
+  {"category":"Daily Store Ops","roles":["manager"],"type":"App","name":"Morning Cash Count","description":"Safe, night drop, and till closes by 10 AM.","url":"https://aqua2lab.github.io/varsa-store-close/manager-tools/morning_count.html"},
+  {"category":"Daily Store Ops","roles":["manager"],"type":"App","name":"Cashier Post Audit","description":"Did each shift post washroom, trash, till, and task photos?","url":"https://aqua2lab.github.io/varsa-store-close/manager-tools/post_audit.html"},
+  {"category":"Daily Store Ops","roles":["manager"],"type":"App","name":"Night Audit","description":"Camera check of last night, done by 10 AM.","url":"https://aqua2lab.github.io/varsa-store-close/manager-tools/night_audit.html"},
+  {"category":"Daily Store Ops","roles":["manager"],"type":"App","name":"Expenses","description":"Non-vendor cash out, with a photo or a bill note.","url":"https://aqua2lab.github.io/varsa-store-close/manager-tools/expenses.html"},
+  {"category":"Daily Store Ops","roles":["manager"],"type":"App","name":"Delivery Intake","description":"Check the invoice while the vendor rep is still here.","url":"https://aqua2lab.github.io/varsa-store-close/manager-tools/delivery_intake.html"},
+  {"category":"Daily Store Ops","roles":["manager"],"type":"App","name":"Store Visit Audit","description":"Weekly visit notes for each store.","url":"https://aqua2lab.github.io/varsa-store-close/manager-tools/store_visit.html"},
+  {"category":"Daily Store Ops","roles":["manager"],"type":"App","name":"Shelf & Stock Audit","description":"Gaps, expired items, facing, and what to order.","url":"https://aqua2lab.github.io/varsa-store-close/manager-tools/shelf_audit.html"},
+  {"category":"Daily Store Ops","roles":["manager"],"type":"App","name":"Price Tag Audit","description":"Missing price tags put up within 48 hours.","url":"https://aqua2lab.github.io/varsa-store-close/manager-tools/price_tag_audit.html"},
+  {"category":"Daily Store Ops","roles":["manager"],"type":"App","name":"Cashier Activity","description":"Latest cashier entries that need a look.","url":"https://aqua2lab.github.io/varsa-store-close/manager-tools/cashier_activity.html"},
+  {"category":"Daily Store Ops","roles":["manager"],"type":"App","name":"Today's Plan","description":"Shift tasks posted in the group by 9:00 AM.","url":"https://aqua2lab.github.io/varsa-store-close/manager-tools/todays_plan.html"},
+  {"category":"Daily Store Ops","roles":["manager"],"type":"App","name":"ESM Shift Check","description":"Daily group check-in for the stores.","url":"https://aqua2lab.github.io/varsa-store-close/manager-tools/shift_check.html"},
+  {"category":"Daily Store Ops","roles":["manager"],"type":"Sheet","name":"Store Close Log","description":"Nightly store close entries.","url":"https://docs.google.com/spreadsheets/d/149QWdotKvCoGT3gUosi_-oqPSdMeqT3tKH6yI5UE548/edit"},
+  {"category":"Daily Store Ops","roles":["manager"],"type":"Sheet","name":"Cashier Tools Data","description":"Rows saved by the cashier and manager tools.","url":"https://docs.google.com/spreadsheets/d/1K1bADx_bBnS2_Rfe8keggyUvmtMNxti1NXcagGuLJ3U/edit"},
+  {"category":"Daily Store Ops","roles":["manager"],"type":"Sheet","name":"Cashier Incentive and Audits","description":"Cashier incentive and audit tracking.","url":"https://docs.google.com/spreadsheets/d/1Zmc-amH2my8XSZ8RcVKoC0e7bHZ0Wuvc5W4ofYvJpig/edit"},
+  {"category":"Daily Store Ops","roles":["manager","cashier"],"type":"App","name":"Cashier Tools","description":"The tools cashiers use on a shift.","url":"https://aqua2lab.github.io/varsa-store-close/cashier-tools/"},
+  {"category":"Daily Store Ops","roles":["manager","cashier"],"type":"App","name":"Nightly Store Close","description":"Fill the close from the Ruby2 store close report.","url":"https://aqua2lab.github.io/varsa-store-close/"},
+  {"category":"Daily Store Ops","roles":["manager","cashier"],"type":"App","name":"Till Close","description":"End of every shift. This is a till close, not a store close.","url":"https://aqua2lab.github.io/varsa-store-close/cashier-tools/till_close.html"},
+  {"category":"Daily Store Ops","roles":["manager"],"type":"App","name":"Start of Shift","description":"Till at $300, trash, washroom, and the first tasks.","url":"https://aqua2lab.github.io/varsa-store-close/cashier-tools/shift_checklist.html"},
+  {"category":"Daily Store Ops","roles":["manager"],"type":"App","name":"Product Issue / Low Stock","description":"Won't scan, missing or wrong price, a deal, or low stock.","url":"https://aqua2lab.github.io/varsa-store-close/cashier-tools/product_issue.html"},
+  {"category":"Daily Store Ops","roles":["manager"],"type":"App","name":"Supply Request","description":"Bags, bands, cleaning supplies, and receipt paper.","url":"https://aqua2lab.github.io/varsa-store-close/cashier-tools/supply_request.html"},
+  {"category":"Daily Store Ops","roles":["manager"],"type":"App","name":"Void / No-Sale","description":"Log a void or drawer open, with a photo of the slip.","url":"https://aqua2lab.github.io/varsa-store-close/cashier-tools/void_nosale.html"},
+  {"category":"Daily Store Ops","roles":["manager"],"type":"App","name":"Fuel Price Change","description":"Update the sign and the pumps, then photo the sign.","url":"https://aqua2lab.github.io/varsa-store-close/cashier-tools/fuel_price.html"},
+
+  {"category":"Vendors, Invoices & Payments","roles":["manager"],"type":"Sheet","name":"Vendor Database","description":"Vendor names and contacts.","url":"https://docs.google.com/spreadsheets/d/1Ysw12YbX84LNmIEwL6sOYBY8UOyQVVg0I_LL820HFH8/edit"},
+  {"category":"Vendors, Invoices & Payments","roles":["manager"],"type":"App","name":"Invoice Upload","description":"Scan a vendor invoice into Drive and the invoices log.","url":"https://aqua2lab.github.io/varsa-store-close/manager-tools/invoice_upload.html"},
+  {"category":"Vendors, Invoices & Payments","roles":["manager"],"type":"App","name":"Check Upload","description":"Photo of a vendor check, with the amount and invoice it pays.","url":"https://aqua2lab.github.io/varsa-store-close/manager-tools/check_upload.html"},
+  {"category":"Vendors, Invoices & Payments","roles":["manager"],"type":"Form","name":"Vendor Checks form","description":"Enter a vendor check.","url":"https://docs.google.com/forms/d/e/1FAIpQLSdPDUBqNwHvYi9XkQ3WZ5uRBG0t8bhKOHuxwAMccxLrHCRUYA/viewform"},
+  {"category":"Vendors, Invoices & Payments","roles":["manager"],"type":"Sheet","name":"Invoices and Checks Log","description":"Saved invoices and checks.","url":"https://docs.google.com/spreadsheets/d/19GLxvBXecQKYmpYC83m0F0JAAI8w7YGfZRml0WAXiu0/edit"},
+  {"category":"Vendors, Invoices & Payments","roles":["manager"],"type":"App","name":"ACH Payment Setup","description":"Set up an ACH payment.","url":"https://aqua2lab.github.io/barcode-scanner/ach.html"},
+  {"category":"Vendors, Invoices & Payments","roles":["manager"],"type":"Sheet","name":"Varsa Group ACH sheet","description":"ACH payment records.","url":"https://docs.google.com/spreadsheets/d/1pRQhhundPb3qzdWE5Y4k1QX3FMMZfaHqRJBZbj21ImE/edit"},
+  {"category":"Vendors, Invoices & Payments","roles":["manager"],"type":"Sheet","name":"Accounts Tracker","description":"Account balances and follow-ups.","url":"https://docs.google.com/spreadsheets/d/1CbYFjpXpiqQGxp-TvYRWipXPm77MCtvuCIhfZsBYMA0/edit"},
+
+  {"category":"Inventory & Supplies","roles":["manager"],"type":"App","name":"Chevron Inventory Scanner","description":"Scan inventory at Thomasville Chevron.","url":"https://aqua2lab.github.io/barcode-scanner/"},
+  {"category":"Inventory & Supplies","roles":["manager"],"type":"App","name":"Outrun Inventory Scanner","description":"Scan inventory at Thomasville Outrun.","url":"https://aqua2lab.github.io/barcode-scanner/outrun.html"},
+  {"category":"Inventory & Supplies","roles":["manager"],"type":"Sheet","name":"Inventory Scans sheet","description":"Scans sent from the inventory scanners.","url":"https://docs.google.com/spreadsheets/d/1UgthO2PPVWl1QJDQKhutYykHnv61vNcxKmlswIkTD7c/edit"},
+  {"category":"Inventory & Supplies","roles":["manager"],"type":"App","name":"Office Supply Tracker","description":"Track office supplies on hand.","url":"https://aqua2lab.github.io/barcode-scanner/supplies.html"},
+  {"category":"Inventory & Supplies","roles":["manager"],"type":"Sheet","name":"Office Supply sheet","description":"Office supply counts.","url":"https://docs.google.com/spreadsheets/d/1dw60YyEb_rs8VhmDB-oQTxtY4FglLCcj0W4g8b_rloY/edit"},
+
+  {"category":"Drive Folders","roles":["manager"],"type":"Folder","name":"Varsa Group LLC","description":"Main company folder.","url":"https://drive.google.com/drive/folders/1ReqBmblNlJmxpU0_jbLxrNEJEu8w4xAt"},
+  {"category":"Drive Folders","roles":["manager"],"type":"Folder","name":"Hiring & HR","description":"Hiring and HR files.","url":"https://drive.google.com/drive/folders/1bzF9UINBxpwBctHL-BEPOBFBC67lYxPl"},
+  {"category":"Drive Folders","roles":["manager"],"type":"Folder","name":"Payroll","description":"Payroll files.","url":"https://drive.google.com/drive/folders/1IS4S2kJulh8pt_p-YM-skVb-T8TJgt7I"},
+  {"category":"Drive Folders","roles":["manager"],"type":"Folder","name":"Pay Stubs","description":"Pay stubs.","url":"https://drive.google.com/drive/folders/1pyDqCV6ZeJXVn-OyqU8AR32jAuImqyDe"},
+  {"category":"Drive Folders","roles":["manager"],"type":"Folder","name":"Gusto Export","description":"Exports from payroll.","url":"https://drive.google.com/drive/folders/1wuf4ssLBRddowToeuzFArrYQ3hcyD5Gv"},
+  {"category":"Drive Folders","roles":["manager"],"type":"Folder","name":"ALDOR Sales Tax","description":"Alabama sales tax files.","url":"https://drive.google.com/drive/folders/1v2Ii0sPx8xc9fHUwHyA4Kc8iAWgyjTQH"},
+  {"category":"Drive Folders","roles":["manager"],"type":"Folder","name":"Invoices","description":"Vendor invoice scans.","url":"https://drive.google.com/drive/folders/1iNc_rzKewJcQ_c8PBjbZ7nMhr1Y6NgkF"},
+  {"category":"Drive Folders","roles":["manager"],"type":"Folder","name":"Checks","description":"Photos of vendor checks.","url":"https://drive.google.com/drive/folders/1fTqb4s225F1gHyOJJiRBG8q-8EHnxE8h"},
+  {"category":"Drive Folders","roles":["manager"],"type":"Folder","name":"Onboarding Documents","description":"Documents collected during onboarding.","url":"https://drive.google.com/drive/folders/1Pj0sQJfl1fAHEbLBIGrZTWUbZEV7YBbZ"},
+  {"category":"Drive Folders","roles":["manager"],"type":"Folder","name":"NGTeco Exports","description":"Time-clock export files.","url":"https://drive.google.com/drive/folders/1enm11S23Pfd2GjUz-mxRICEm4Nz7TAdH"},
+
+  {"category":"GitHub","roles":["manager"],"type":"Repo","name":"varsa-store-close","description":"This site: store close, manager tools, and cashier tools.","url":"https://github.com/Aqua2Lab/varsa-store-close"},
+  {"category":"GitHub","roles":["manager"],"type":"Repo","name":"barcode-scanner","description":"Inventory scanners, onboarding, direct deposit, and ACH.","url":"https://github.com/Aqua2Lab/barcode-scanner"}
+];
